@@ -63,31 +63,23 @@ const registerHandler = (client) => {
 
                 const permissionOverwrites = [
                     {
-                        __role: interaction.guild.roles.everyone,
                         id: interaction.guild.roles.everyone.id,
-                        allow: [],
                         deny: ['VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY']
                     },
                     {
-                        __role: studentRole,
                         id: studentRole.id,
                         allow: ['VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
-                        deny: [],
                     },
                     {
-                        __role: globalTeacherRole,
                         id: globalTeacherRole.id,
                         allow: ['VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
-                        deny: [],
                     },
                     {
-                        __role: teacherRole,
                         id: teacherRole.id,
                         allow: [ 
                             'VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY', 
                             'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'MANAGE_MESSAGES'
                         ],
-                        deny: [],
                     }
                 ]
                 const voiceChannel = await interaction.guild.channels.create(`${groupName} - voice`, {
@@ -100,19 +92,19 @@ const registerHandler = (client) => {
                     permissionOverwrites: permissionOverwrites,
                 })
 
-                // this could potentialy break while adding new roles
-                permissionOverwrites.map( permissionOverwrite => {
-                    const overwrites = {}
-                    permissionOverwrite.deny.map( name => {
-                        overwrites[name] = false
-                    })
-                    permissionOverwrite.allow.map( name => {
-                        overwrites[name] = true
-                    })
-                    categoryChannel.permissionOverwrites.edit(
-                        permissionOverwrite.__role,  overwrites
-                    )
-                })
+
+                // permissionOverwrites.map( permissionOverwrite => {
+                //     const overwrites = {}
+                //     permissionOverwrite.deny.map( name => {
+                //         overwrites[name] = false
+                //     })
+                //     permissionOverwrite.allow.map( name => {
+                //         overwrites[name] = true
+                //     })
+                //     categoryChannel.permissionOverwrites.edit(
+                //         permissionOverwrite.__role,  overwrites
+                //     )
+                // })
                 
                 
 
