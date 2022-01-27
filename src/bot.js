@@ -1,10 +1,13 @@
 const { REST } = require('@discordjs/rest');
 const { env } = require("./config.js")
-const { Routes } = require('discord-api-types/v9');
+const { Routes, Utils } = require('discord-api-types/v9');
+const { sleep } = require('./utils.js')
 const { Client, Intents } = require('discord.js');
 const { databaseManager } = require("./database/databaseManager");
 const client = new Client({ intents: [Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS] });
+
+
 
 const commands = [ 
     require("./commands/addgroup.js"),
@@ -30,6 +33,7 @@ client.on('ready', () => {
 
 client.on('rateLimit', (info) => {
     console.log("rate limit: \n" + JSON.stringify(info))
+    actionQueue.setTimeout(info.timeout)
 })
 
 client.on("guildMemberAdd", async (member) => {
@@ -44,9 +48,30 @@ client.on("guildMemberAdd", async (member) => {
     }
 });
 
+
+// perform asynchronous queue loop
+// created specifically to be able to handle 
+// big bulk updates without constantly getting timed out
+
+// singular operations have priority over bulk updates
+
+// const queue = require('./queue.js');
+// const actionQueue = new queue.ActionQueue();
+// setInterval( () => {
+//     while ( !actionQueue.empty() ) {
+//         sleep( actionQueue.getTimeout()+1 ).then( () => {
+//             console.log( `${actionQueue.size()} in queue... ` )
+//             actionQueue.setTimeout(0)
+//             actionQueue.performNextAction()
+//         });
+//     }
+// }, 0)
+
+
+// Not Yet Implemented, does not seem to work. Should look into this in the future
+
 client.login(env.BOT_TOKEN);
 
-// Bearer iOpWnHDIzyq4mBcGZKqXPLvRo7SELs
 
 (async (client) => {
     const rest = new REST({ version: '9' }).setToken(env.BOT_TOKEN);
@@ -74,3 +99,4 @@ client.login(env.BOT_TOKEN);
         console.error(error);
     }
 })(client);
+

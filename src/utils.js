@@ -5,3 +5,9 @@ exports.includesAny = (text, textlist) => {
     })
     return check
 }
+
+exports.sleep = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}

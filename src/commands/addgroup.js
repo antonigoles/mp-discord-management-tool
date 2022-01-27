@@ -27,6 +27,20 @@ const registerHandler = (client) => {
                 return;
             }
 
+            const categoryChannelName = interaction.options.getString("category_name")
+            let categoryChannel = null;
+            await interaction.guild.channels.fetch().then( channels => {
+                channels.map( channel => {
+                    if ( channel.type == 'GUILD_CATEGORY' && channel.name == categoryChannelName ) {
+                        categoryChannel = channel;
+                    }
+                })
+            })
+
+            if ( categoryChannel == null ) {
+                interaction.reply({content: `😣 Ta kategoria nie istnieje!!`})
+                return;
+            }
 
             interaction.reply({content: `✅ Utworzono nową grupę o nazwie: ${ "`" + groupName + "`" }`});
             await (async () => {
@@ -47,40 +61,68 @@ const registerHandler = (client) => {
                 const globalTeacherRole = await interaction.guild.roles.cache
                     .find(role => role.name === "Nauczyciel" )
 
-                const categoryChannel = await interaction.guild.channels.create(groupName, {
-                    type: 'GUILD_CATEGORY',
-                    permissionOverwrites: [
-                        {
-                            id: interaction.guild.roles.everyone.id,
-                            deny: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY']
-                        },
-                        {
-                            id: studentRole.id,
-                            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY']
-                        },
-                        {
-                            id: globalTeacherRole.id,
-                            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY']
-                        },
-                        {
-                            id: teacherRole.id,
-                            allow: Permissions.ALL
-                        }
-                    ]
-                })
-                const voiceChannel = await interaction.guild.channels.create("voice", {
+                const permissionOverwrites = [
+                    {
+                        __role: interaction.guild.roles.everyone,
+                        id: interaction.guild.roles.everyone.id,
+                        allow: [],
+                        deny: ['VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY']
+                    },
+                    {
+                        __role: studentRole,
+                        id: studentRole.id,
+                        allow: ['VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
+                        deny: [],
+                    },
+                    {
+                        __role: globalTeacherRole,
+                        id: globalTeacherRole.id,
+                        allow: ['VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
+                        deny: [],
+                    },
+                    {
+                        __role: teacherRole,
+                        id: teacherRole.id,
+                        allow: [ 
+                            'VIEW_CHANNEL', 'CONNECT', 'SPEAK', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY', 
+                            'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'MANAGE_MESSAGES'
+                        ],
+                        deny: [],
+                    }
+                ]
+                const voiceChannel = await interaction.guild.channels.create(`${groupName} - voice`, {
                     type: 'GUILD_VOICE',
+                    permissionOverwrites: permissionOverwrites,
+                    
                 })
-                const textChannel = await interaction.guild.channels.create("general", {
+                const textChannel = await interaction.guild.channels.create(`${groupName} - general`, {
                     type: 'GUILD_TEXT',
+                    permissionOverwrites: permissionOverwrites,
                 })
+
+                // this could potentialy break while adding new roles
+                permissionOverwrites.map( permissionOverwrite => {
+                    const overwrites = {}
+                    permissionOverwrite.deny.map( name => {
+                        overwrites[name] = false
+                    })
+                    permissionOverwrite.allow.map( name => {
+                        overwrites[name] = true
+                    })
+                    categoryChannel.permissionOverwrites.edit(
+                        permissionOverwrite.__role,  overwrites
+                    )
+                })
+                
+                
+
                 await voiceChannel.setParent(categoryChannel.id, { lockPermissions: true })
                 await textChannel.setParent(categoryChannel.id, { lockPermissions: true })
 
                 await databaseManager.createGroup(
                     interaction.guild.id,
                     groupName,
-                    [ voiceChannel.id, textChannel.id, categoryChannel.id ]
+                    [ voiceChannel.id, textChannel.id ]
                 )
             })();
         }
@@ -94,6 +136,11 @@ exports.command = new SlashCommandBuilder()
                     .addStringOption( option => 
                         option.setName("group_name")
                             .setDescription("The name of the group (must be unique)")
+                            .setRequired(true)
+                    )
+                    .addStringOption( option => 
+                        option.setName("category_name")
+                            .setDescription("The category the channel")
                             .setRequired(true)
                     );
 

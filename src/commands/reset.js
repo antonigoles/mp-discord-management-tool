@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { ApplicationCommandManager } = require('discord.js');
 const { databaseManager } = require("../database/databaseManager.js")
 const { includesAny } = require("../utils.js")
 
@@ -36,7 +37,7 @@ const registerHandler = (client) => {
                     .then( roles => {
                         roles.map( role => {
                             const r_name = role.name
-                            if ( includesAny(r_name, ["Grupa: ","- Admin","- Uczen","- Nauczyciel","- Gosc"]) )
+                            if ( includesAny(r_name, ["Grupa: ","- Admin","- Uczen","- Nauczyciel","- Gosc"]) ) 
                                 interaction.guild.roles.delete( role.id, "group reset")
                         })
                     })
@@ -47,8 +48,8 @@ const registerHandler = (client) => {
                 groups.map( group => {
                     group.channels.map( channelId => {
                         interaction.guild.channels.fetch(channelId).then( channel => {
-                            channel.delete()
-                        })
+                            channel.delete() 
+                        })  
                     })
                     databaseManager.deleteGroup( interaction.guild.id, group.name )
                 })

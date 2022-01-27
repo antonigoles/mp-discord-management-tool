@@ -18,6 +18,8 @@ const registerHandler = async (client) => {
                 return;
             }
             await databaseManager.setGuildSetupStatus( interaction.guild.id, true )
+
+
             interaction.guild.roles.create({
                 name: `Admin`,
                 color: 'RED',
@@ -49,7 +51,7 @@ const registerHandler = async (client) => {
                 })
             })
 
-
+            
 
             interaction.reply({content: `👉 Dodano rangi: ${ "`Admin, Nauczyciel, Uczen, Gosc`" }`});
         }
