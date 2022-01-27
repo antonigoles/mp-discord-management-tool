@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { Permissions } = require("discord.js")
+const Utils = require('../utils.js')
 const { databaseManager } = require("../database/databaseManager.js")
 
 const COMMAND_NAME  =   "addgroup";
@@ -20,7 +20,7 @@ const registerHandler = (client) => {
                 return;
             }
 
-            const groupName = interaction.options.getString("group_name")
+            const groupName = Utils.normalizeGroupName(interaction.options.getString("group_name"))
 
             if ( await databaseManager.isGroupInDb(interaction.guild.id, groupName) ) {
                 interaction.reply({content: `😣 Ta grupa już istnieje!!`})
@@ -82,29 +82,15 @@ const registerHandler = (client) => {
                         ],
                     }
                 ]
-                const voiceChannel = await interaction.guild.channels.create(`${groupName} - voice`, {
+                const voiceChannel = await interaction.guild.channels.create(`${groupName}-voice`, {
                     type: 'GUILD_VOICE',
                     permissionOverwrites: permissionOverwrites,
                     
                 })
-                const textChannel = await interaction.guild.channels.create(`${groupName} - general`, {
+                const textChannel = await interaction.guild.channels.create(`${groupName}-general`, {
                     type: 'GUILD_TEXT',
                     permissionOverwrites: permissionOverwrites,
                 })
-
-
-                // permissionOverwrites.map( permissionOverwrite => {
-                //     const overwrites = {}
-                //     permissionOverwrite.deny.map( name => {
-                //         overwrites[name] = false
-                //     })
-                //     permissionOverwrite.allow.map( name => {
-                //         overwrites[name] = true
-                //     })
-                //     categoryChannel.permissionOverwrites.edit(
-                //         permissionOverwrite.__role,  overwrites
-                //     )
-                // })
                 
                 
 

@@ -6,6 +6,10 @@ exports.includesAny = (text, textlist) => {
     return check
 }
 
+exports.normalizeGroupName = ( groupName ) => {
+  return groupName.toLocaleLowerCase().split(" ").join("-")
+}
+
 exports.sleep = (ms) => {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
