@@ -1,10 +1,14 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, MessageActionRow, MessageSelectMenu, InteractionCollector } = require('discord.js');
+const Utils = require('../utils.js')
 
 const COMMAND_NAME  =   "poll";
 const DESCRIPTION   =   "Creates poll";
 
+const command_temporary_memory = {}
+
 const registerHandler = async (client) => {
+    const emojiTable = "🔴,🟠,🟡,🟢,🔵,🟣,🟤,⚫,⚪,🟥,🟧,🟨,🟩,🟦,🟪,🟫".split(",")
     client.on('interactionCreate', async interaction => {
         if (!interaction.isCommand()) return;
         if ( interaction.commandName === COMMAND_NAME ) {
@@ -22,27 +26,107 @@ const registerHandler = async (client) => {
                     pollOptions.push( interaction.options.getString(`option${i}`) )
                 }
             }
-            const emojiTable = "🚗🚕🚙🚌🚎🏎🚓🚑🚒🚐🚚🚛🚜🛴🚲🛵🏍🚨🚔🚍".split("")
+            
             const title = interaction.options.getString('text')
             const pollEmbed = new MessageEmbed()
-                .setColor('#0099ff')
-                .setTitle("Ankieta")
+                .setAuthor({ 
+                    name: 'Ankieta', 
+                    iconURL: 'https://www.seekpng.com/png/full/67-671514_learn-more-free-survey-icon.png' 
+                })
+                .setColor('#ff1d00')
+                .setTitle(title)
                 .addFields( [
                     { 
-                        name: `${title} \n`,
+                        name: `*Opcje:*`,
                         value: `${pollOptions.map( (opt,idx) => {
-                            return `${emojiTable[idx]} \`${opt}\``
+                            return `${emojiTable[idx]} - \`${opt}\``
                         }).join("\n")}`
                      }
                         
                     ] 
-                );
+                )
+                .setFooter({
+                    text: `${ pollOptions.map( (opt,idx) => {
+                        return `${emojiTable[idx]}: 0`
+                    }).join(" ") }`
+                })
 
-            const interactionMessage = await interaction.reply({ content: " ", embeds: [ pollEmbed ], fetchReply: true })
-            for ( let j = 0; j<pollOptions.length; j++ ) 
-                await interactionMessage.react( emojiTable[j] );
+            const timestamp = Date.now();
+            
+            command_temporary_memory[timestamp] = { 
+                "size": pollOptions.length 
+            }
+            pollOptions.map( (_,idx) => {
+                command_temporary_memory[timestamp][idx+1]=[];
+            })
+            
+            const row = new MessageActionRow()
+                .addComponents([
+                    new MessageSelectMenu()
+                        .setCustomId("select-poll-answer")
+                        .setPlaceholder('Brak odpowiedzi')
+                        .addOptions([
+                            ...pollOptions.map( (opt,idx) => {
+                                return { 
+                                    label: `${emojiTable[idx]} ${opt}`, 
+                                    description: `Opcja ${idx+1}`,
+                                    value: `option-${idx+1}-${timestamp}`
+                                }  
+                            })
+                        ])
+                ])
+
+            const interactionMessage = await interaction.reply({ 
+                content: " ", 
+                embeds: [ pollEmbed ], 
+                fetchReply: true,  
+                components: [ row ] 
+            })   
         }
     });
+
+    // handle input select interaction
+    client.on('interactionCreate', async interaction => {
+        if (!interaction.isSelectMenu()) return;
+        if ( interaction.customId != "select-poll-answer" ) return;
+
+        // this is just awful and one day has to go
+        // but not now...
+
+        const choice = interaction.values[0].split('-')
+        const timestamp = choice[2]
+        const choiceid = choice[1]
+
+        const originalMessage = interaction.message
+
+        const pollOptions = []
+
+
+        // if user has choosen this option already we want to remove his vote
+        let check=(command_temporary_memory[timestamp][choiceid].includes( interaction.user.id ))
+
+        for ( let i = 1; i<=command_temporary_memory[timestamp]["size"]; i++ ) {
+            // XD
+            pollOptions.push(i);
+            command_temporary_memory[timestamp][i] 
+                = Utils.removeItemOnce(command_temporary_memory[timestamp][i], interaction.user.id )
+        }
+        if ( !check ) command_temporary_memory[timestamp][choiceid].push( interaction.user.id )
+
+        originalMessage.embeds[0].setFooter({
+            text: `${ pollOptions.map( (opt,idx) => 
+                 `${emojiTable[idx]}: ${command_temporary_memory[timestamp][idx+1].length}`
+            ).join(" ") }`
+        })
+
+        originalMessage.content = " "
+        interaction.update( {
+            content: " ",
+            components: originalMessage.components,
+            embeds: originalMessage.embeds,
+            fetchReply: true,
+        })
+    })
 }
 
 

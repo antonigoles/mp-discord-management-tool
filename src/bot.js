@@ -21,7 +21,13 @@ const commands = [
     require("./commands/removestudents.js"),
     require("./commands/removeteacher.js"),
     require("./commands/poll.js"),
+    require("./commands/tasktracker.js"),
 ];
+
+// TODO: Move every command file from format: register => { client.on('interaction' ) }
+// to client.on('interaction', () => register() )
+// (safer for memory)
+client.setMaxListeners(30)
 
 // register comamnds handlers
 
