@@ -9,6 +9,8 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS,
 
 
 
+
+// TODO: Refactor this
 const commands = [ 
     require("./commands/addgroup.js"),
     require("./commands/setup.js"),
@@ -18,6 +20,7 @@ const commands = [
     require("./commands/removegroup.js"),
     require("./commands/removestudents.js"),
     require("./commands/removeteacher.js"),
+    require("./commands/poll.js"),
 ];
 
 // register comamnds handlers
@@ -33,7 +36,6 @@ client.on('ready', () => {
 
 client.on('rateLimit', (info) => {
     console.log("rate limit: \n" + JSON.stringify(info))
-    actionQueue.setTimeout(info.timeout)
 })
 
 client.on("guildMemberAdd", async (member) => {
