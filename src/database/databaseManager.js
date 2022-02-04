@@ -1,3 +1,4 @@
+const Utils = require('../utils.js')
 const fs = require('fs')
 const mongojs = require('mongojs')
 const { env } = require("../config.js")
@@ -39,7 +40,7 @@ const setGuildSetupStatus = async ( guildId, status ) => {
 }   
 
 const isGuildSettedUp = async ( guildId ) => {
-    let check=false;
+    let check=false; 
     if ( !(await isGuildInDB( guildId )) ) {
         return false;
     }
@@ -205,8 +206,56 @@ const getGroupByName = async ( guildId, name ) => {
     })
 }
 
+const addTaskTrackerToDb = async ( taskCount, studentsIds, trackerId ) => {
+    return new Promise(async (resolve) => {
+        const progress = {}
+        studentsIds.map( studentId => {
+            progress[studentId]={}
+            for ( let i = 0; i<taskCount; i++ ) 
+                progress[studentId][i] = false
+        })
+        await db.tasktrackers.insert({
+            trackerId: trackerId,
+            taskCount: taskCount,
+            progress: progress
+        })
+    })
+}
+
+const getTaskTracker = async ( trackerId ) => {
+    return new Promise(( resolve, reject ) => {
+        db.tasktrackers.findOne({ trackerId: trackerId }, (err, doc) => {
+            if (err) {
+                reject( err )
+            }
+            resolve( doc )
+        })
+    })
+}
+
+const updateAndReturnTaskTracker = async ( trackerId, studentId, taskId ) => {
+    const oldDoc = await getTaskTracker(trackerId).catch( 
+        err => { throw err } 
+    )
+    return new Promise((resolve, reject ) => {
+        if ( oldDoc == undefined ) reject("tracker does not exist")
+        if ( oldDoc.progress[studentId] == undefined ) reject("User is not part of this tracker")
+        oldDoc.progress[studentId][taskId] = !oldDoc.progress[studentId][taskId]
+        const newValue = oldDoc.progress[studentId][taskId]
+        const update = { "$set": {} }
+        const taskPath = `progress.${studentId}.${taskId}`
+        update["$set"][taskPath] = newValue
+        db.tasktrackers.update(
+            { trackerId: trackerId }, update, {},
+            (err, doc) => {
+                if ( err ) reject(err);
+                resolve( oldDoc )
+            }) 
+    })
+}
+
 exports.databaseManager = {
     setGuildSetupStatus, isGuildSettedUp, createGroup, deleteGroup, addTeacherToGroup, addStudentToGroup,
     addChannelsToGroup, isGroupInDb, getAllGroupsFromGuild, getGroupByName, removeStudentFromGroup, isStudentInGroup,
-    isTeacherInGroup, removeTeacherFromGroup
+    isTeacherInGroup, removeTeacherFromGroup, addTaskTrackerToDb, updateAndReturnTaskTracker
 }

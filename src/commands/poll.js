@@ -93,6 +93,9 @@ const registerHandler = async (client) => {
         // this is just awful and one day has to go
         // but not now...
 
+        
+        
+
         const choice = interaction.values[0].split('-')
         const timestamp = choice[2]
         const choiceid = choice[1]
@@ -101,6 +104,10 @@ const registerHandler = async (client) => {
 
         const pollOptions = []
 
+        if ( command_temporary_memory[timestamp] == undefined ) {
+            await interaction.reply({ content: 'Ta ankieta już wygasła :(', ephemeral: true });
+            return
+        }
 
         // if user has choosen this option already we want to remove his vote
         let check=(command_temporary_memory[timestamp][choiceid].includes( interaction.user.id ))

@@ -1,7 +1,7 @@
 const { REST } = require('@discordjs/rest');
 const { env } = require("./config.js")
-const { Routes, Utils } = require('discord-api-types/v9');
-const { sleep } = require('./utils.js')
+const { Routes } = require('discord-api-types/v9');
+const Utils = require('./utils.js')
 const { Client, Intents } = require('discord.js');
 const { databaseManager } = require("./database/databaseManager");
 const client = new Client({ intents: [Intents.FLAGS.GUILDS,
@@ -37,17 +37,17 @@ commands.map( (cmd) => {
 
 
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+    Utils.logDebug(`Logged in as ${client.user.tag}!`);
 });
 
 client.on('rateLimit', (info) => {
-    console.log("rate limit: \n" + JSON.stringify(info))
+    Utils.logDebug("rate limit: \n" + JSON.stringify(info))
 })
 
 client.on("guildMemberAdd", async (member) => {
-    console.log("New user joined")
+    Utils.logDebug("New user joined")
     if ( await databaseManager.isGuildSettedUp( member.guild.id ) ) {
-        console.log("Asigning Guest role")
+        Utils.logDebug("Asigning Guest role")
         await member.guild.roles.fetch().then( roles => {
             roles.map( role => {
                 if ( role.name === "Gosc" ) member.roles.add(role);
@@ -84,27 +84,26 @@ client.login(env.BOT_TOKEN);
 (async (client) => {
     const rest = new REST({ version: '9' }).setToken(env.BOT_TOKEN);
     try {
-        console.log('Started refreshing application (/) commands.');
-        console.log()
+        Utils.logDebug('Started refreshing application (/) commands.');
         let parsed_body = [...commands.map( e => e.command.toJSON() )]
-        console.log(parsed_body)
+        // Utils.logDebug(parsed_body)
         if ( process.argv.includes("production-mode") ) {
-            console.log("Running in PRODUCTION mode")
+            Utils.logDebug( "Running in PRODUCTION mode")
             await rest.put(
                 Routes.applicationCommands(env.APP_ID),
                 { body: parsed_body },
             );
         } else {
-            console.log("Running in DEVELOPER mode")
+            Utils.logDebug("Running in DEVELOPER mode")
             await rest.put(
                 Routes.applicationGuildCommands(env.APP_ID, env.DEV_SERVER_ID ),
                 { body: parsed_body },
             );
         }
 
-        console.log('Successfully reloaded application (/) commands.');
+        Utils.logDebug('Successfully reloaded application (/) commands.');
     } catch (error) {
-        console.error(error);
+        Utils.logDebug(error);
     }
 })(client);
 
