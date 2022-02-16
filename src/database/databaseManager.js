@@ -238,8 +238,8 @@ const updateAndReturnTaskTracker = async ( trackerId, studentId, taskId ) => {
         err => { throw err } 
     )
     return new Promise((resolve, reject ) => {
-        if ( oldDoc == undefined ) reject("tracker does not exist")
-        if ( oldDoc.progress[studentId] == undefined ) reject("User is not part of this tracker")
+        if ( oldDoc == undefined ) reject( Errors.ELEMENT_DOES_NOT_EXIST )
+        if ( oldDoc.progress[studentId] == undefined ) reject( Errors.NO_SUCH_USER_IN_COLLECTION )
         oldDoc.progress[studentId][taskId] = !oldDoc.progress[studentId][taskId]
         const newValue = oldDoc.progress[studentId][taskId]
         const update = { "$set": {} }
@@ -253,6 +253,13 @@ const updateAndReturnTaskTracker = async ( trackerId, studentId, taskId ) => {
             }) 
     })
 }
+
+const Errors = {
+    NO_SUCH_USER_IN_COLLECTION: new Error("User is not part of this collection"),
+    ELEMENT_DOES_NOT_EXIST: new Error("Element is not present in the collection"),
+} 
+
+exports.Errors = Errors
 
 exports.databaseManager = {
     setGuildSetupStatus, isGuildSettedUp, createGroup, deleteGroup, addTeacherToGroup, addStudentToGroup,

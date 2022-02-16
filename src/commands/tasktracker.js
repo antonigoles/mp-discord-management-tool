@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
-const { databaseManager } = require('../database/databaseManager.js');
+const { databaseManager, Errors } = require('../database/databaseManager.js');
 const Utils = require('../utils.js')
 
 const COMMAND_NAME  =   "tasktracker";
@@ -127,7 +127,14 @@ const registerHandler = async (client) => {
                 trackerId, interaction.user.id, taskId-1 
             )
         } catch(err) {
-            Utils.logDebug( err)
+            Utils.logDebug( err )
+            if ( err == Errors.NO_SUCH_USER_IN_COLLECTION ) {
+                interaction.reply({ 
+                    content: `Wygląda na to że nie należysz do tej grupy 😧`,
+                    ephemeral: true,
+                })
+                return;
+            } 
             interaction.reply({ 
                 content: `**Wystąpił problem po stronie bazy danych :(**\nmożliwe że tracker już nie jest aktywny`,
                 ephemeral: true,

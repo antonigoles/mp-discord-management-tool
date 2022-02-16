@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { databaseManager } = require("../database/databaseManager.js")
+const Utils = require("../utils.js")
 
 const COMMAND_NAME  =   "removestudents";
 const DESCRIPTION   =   "Removes multiple students at once (min 1 - max 6)";
@@ -35,9 +36,8 @@ const registerHandler = async (client) => {
                 for ( let i = 0; i<futureStudents.length; i++ ) {
                     const futureStudentUser = futureStudents[i]
                     if ( !(await databaseManager.isStudentInGroup( interaction.guild.id, groupName, futureStudentUser.id))) {
-                        console.log(`${futureStudentUser.id} is not in DB!!!`)
+                        Utils.logDebug(`${futureStudentUser.id} is not in DB!!!`)
                         failedCounter++;
-                        console.log(failedCounter)
                         continue;
                     }
                     await databaseManager.removeStudentFromGroup( groupName, interaction.guild.id, futureStudentUser.id )
@@ -56,7 +56,7 @@ const registerHandler = async (client) => {
                 }
             } catch ( err ) {
                 interaction.reply({content: "😨 wystąpił błąd po stronie serwera"})
-                console.log(err)
+                Utils.logDebug(err)
             }
 
             const successful = futureStudents.length - failedCounter
