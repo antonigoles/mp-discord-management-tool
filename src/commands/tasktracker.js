@@ -48,12 +48,18 @@ const registerHandler = async (client) => {
             })
 
             const members = await interaction.guild.members.fetch() 
-
+            
             let groupedStudents = [ [] ]
             groupData.students.map( (e) => {
                 if ( groupedStudents[groupedStudents.length-1].length >= 4 )
                     groupedStudents.push([]) 
                 groupedStudents[groupedStudents.length-1].push(e)
+            })
+
+            const emojis = await interaction.guild.emojis.fetch()
+            const emojiMap = {}
+            emojis.forEach( (emoji) => {
+                emojiMap[ emoji.name ] = emoji;
             })
 
             const taskEmbed = new MessageEmbed()
@@ -75,7 +81,7 @@ const registerHandler = async (client) => {
                                     const mem = members.find( u => u.id == studentId )
                                     const nickname = mem != undefined ? mem.displayName : "UCZEŃ WYSZEDŁ Z SERWERA" 
                                     const parsedName = `${Utils.setLengthString(nickname, 21)}`
-                                    return `\`${parsedName}: \`${tasks.map( _ => ":red_square:" ).join(" ")}`
+                                    return `\`${parsedName}: \`${tasks.map( (_,i) => emojiMap[`red${i+1}`] ).join(" ")}`
                                 }).join("\n") 
                         } 
                     })               
@@ -156,7 +162,11 @@ const registerHandler = async (client) => {
         })
 
         // Utils.logDebug(Object.keys(updatedTracker.progress['269518096031547402']))
-
+        const emojis = await interaction.guild.emojis.fetch()
+        const emojiMap = {}
+        emojis.forEach( (emoji) => {
+            emojiMap[ emoji.name ] = emoji;
+        })
         originalMessage.embeds[0].setFields([
             ...groupedStudents.map( studentGroup => {
                 return { 
@@ -169,7 +179,7 @@ const registerHandler = async (client) => {
                                 Object.keys(updatedTracker.progress[studentId]).map( 
                                     task => 
                                         updatedTracker.progress[studentId][task] ? 
-                                        ":white_check_mark:" : ":red_square:"
+                                        emojiMap[`green${Number(task)+1}`] :  emojiMap[`red${Number(task)+1}`]
                                 ).join(" ")
                             }`
                         }).join("\n") 
