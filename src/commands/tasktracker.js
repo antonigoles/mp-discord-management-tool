@@ -22,6 +22,11 @@ const registerHandler = async (client) => {
                 return;
             }
 
+            if ( !(await databaseManager.isGroupInDb( interaction.guild.id, groupName)) ) {
+                interaction.reply({content: "😨 Taka grupa nie istnieje"})
+                return;
+            }
+
             const groupData = await databaseManager.getGroupByName( interaction.guild.id, groupName )
 
             if ( groupData.students.length <= 0 ) {
