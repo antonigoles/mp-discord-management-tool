@@ -52,8 +52,7 @@ Gdy np. nauczyciel zrobi tasktracker dla grupy, w której znajduje się taki ucz
 BOT_TOKEN=<TOKEN BOTA DISCORD>
 APP_ID=<ID APLIKACJI DISCORD>
 DEV_SERVER_ID=<DEV ONLY, ID SERWERA DISCORD POD DEVELOPMENT>
-DB_USER=<LOGIN DO MONGODB>
-DB_PASS=<HASŁO DO MONGODB>
+DB_CONNECTION_STRING=<CONNECTION STRING DO MONGODB UZUPEŁNIONY W HASŁO>
 ```
 
 **Bot może działać w trybie `Development` oraz w trybie `Production`** <br>
