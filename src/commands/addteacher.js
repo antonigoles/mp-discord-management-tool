@@ -6,9 +6,6 @@ const COMMAND_NAME = "addteacher";
 const DESCRIPTION = "Adds a teacher";
 
 const addTeacher = async (interaction) => {
-    if (!interaction.isCommand()) return;
-    if (!(interaction.commandName === COMMAND_NAME)) return;
-
     // command stuff
     const member = interaction.member;
 
@@ -74,4 +71,4 @@ exports.command = new SlashCommandBuilder()
     );
 
 exports.commandName = COMMAND_NAME;
-exports.handlers = [{ type: "command", func: addTeacher }];
+exports.handlers = [{ type: "APPLICATION_COMMAND", func: addTeacher }];

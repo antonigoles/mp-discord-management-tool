@@ -16,7 +16,7 @@ const client = new Client({
 const normalized_path = require("path").join(__dirname, "commands");
 
 let commands = [];
-let command_handlers = { command: {}, button: {} };
+let command_handlers = { APPLICATION_COMMAND: {}, MESSAGE_COMPONENT: {} };
 
 //reads and imports files from ./commands directory
 require("fs")
@@ -80,17 +80,15 @@ client.on("guildMemberAdd", async (member) => {
 });
 
 client.on("interactionCreate", async (interaction) => {
-    let type = "";
-    //hardcoded :(
-    //can make some sort of config file with types and stuff
-    if (interaction.isCommand()) type = "command";
-    if (interaction.isButton()) type = "button";
+    const type = interaction.type;
+    const commandName =
+        interaction.commandName ?? interaction.message.interaction.commandName;
 
-    if (type == "") return;
     if (!command_handlers.hasOwnProperty(type)) return;
-    if (!command_handlers[type].hasOwnProperty(interaction.commandName)) return;
+    if (!command_handlers[type].hasOwnProperty(commandName)) return;
 
-    command_handlers[type][interaction.commandName];
+    Utils.logDebug(command_handlers[type][commandName]);
+    command_handlers[type][commandName](interaction);
 });
 // perform asynchronous queue loop
 // created specifically to be able to handle

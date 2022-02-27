@@ -6,8 +6,6 @@ const COMMAND_NAME = "setup";
 const DESCRIPTION = "Basic setup";
 
 const setup = async (interaction) => {
-    if (!interaction.isCommand()) return;
-    if (!(interaction.commandName === COMMAND_NAME)) return;
     // command stuff
     const member = interaction.member;
 
@@ -64,4 +62,4 @@ exports.command = new SlashCommandBuilder()
     .setDescription(DESCRIPTION);
 
 exports.commandName = COMMAND_NAME;
-exports.handlers = [{ type: "command", func: setup }];
+exports.handlers = [{ type: "APPLICATION_COMMAND", func: setup }];

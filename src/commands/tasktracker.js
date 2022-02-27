@@ -9,9 +9,6 @@ const DESCRIPTION = "Creates task tracker for students";
 const command_temporary_memory = {};
 
 const taskTracker = async (interaction) => {
-    if (!interaction.isCommand()) return;
-    if (!(interaction.commandName === COMMAND_NAME)) return;
-
     const member = interaction.member;
     const groupName = await Utils.getGroupName(interaction);
 
@@ -291,6 +288,6 @@ exports.command = new SlashCommandBuilder()
 
 exports.commandName = COMMAND_NAME;
 exports.handlers = [
-    { type: "command", func: taskTracker },
-    { type: "button", func: taskTrackerButton },
+    { type: "APPLICATION_COMMAND", func: taskTracker },
+    { type: "MESSAGE_COMPONENT", func: taskTrackerButton },
 ];

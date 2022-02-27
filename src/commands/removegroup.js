@@ -6,8 +6,6 @@ const COMMAND_NAME = "removegroup";
 const DESCRIPTION = "Removes group";
 
 const removeGroup = async (interaction) => {
-    if (!interaction.isCommand()) return;
-    if (!(interaction.commandName === COMMAND_NAME)) return;
     // command stuff
     const member = interaction.member;
     const groupName = Utils.getGroupName(interaction);
@@ -59,4 +57,4 @@ exports.command = new SlashCommandBuilder()
     );
 
 exports.commandName = COMMAND_NAME;
-exports.handlers = [{ type: "command", func: removeGroup }];
+exports.handlers = [{ type: "APPLICATION_COMMAND", func: removeGroup }];

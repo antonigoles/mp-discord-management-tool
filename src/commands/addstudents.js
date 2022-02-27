@@ -6,9 +6,6 @@ const COMMAND_NAME = "addstudents";
 const DESCRIPTION = "Adds multiple students at once (min 1 - max 6)";
 
 const addStudents = async (interaction) => {
-    if (!interaction.isCommand()) return;
-    if (!(interaction.commandName === COMMAND_NAME)) return;
-
     const member = interaction.member;
     const groupName = await Utils.getGroupName(interaction);
 
@@ -119,4 +116,4 @@ exports.command = new SlashCommandBuilder()
     );
 
 exports.commandName = COMMAND_NAME;
-exports.handlers = [{ type: "command", func: addStudents }];
+exports.handlers = [{ type: "APPLICATION_COMMAND", func: addStudents }];

@@ -6,9 +6,6 @@ const COMMAND_NAME = "removeteacher";
 const DESCRIPTION = "Removes teacher from group";
 
 const removeTeacher = async (interaction) => {
-    if (!interaction.isCommand()) return;
-    if (!(interaction.commandName === COMMAND_NAME)) return;
-
     const member = interaction.member;
     const groupName = Utils.getGroupName(interaction);
 
@@ -78,4 +75,4 @@ exports.command = new SlashCommandBuilder()
     );
 
 exports.commandName = COMMAND_NAME;
-exports.handlers = [{ type: "command", func: removeTeacher }];
+exports.handlers = [{ type: "APPLICATION_COMMAND", func: removeTeacher }];

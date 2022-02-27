@@ -6,8 +6,6 @@ const COMMAND_NAME = "reset";
 const DESCRIPTION = "Resets everything";
 
 const reset = async (interaction) => {
-    if (!interaction.isCommand()) return;
-    if (!(interaction.commandName === COMMAND_NAME)) return;
     // command stuff
     const member = interaction.member;
     if (!(await Utils.isAdmin(member))) {
@@ -85,4 +83,4 @@ exports.command = new SlashCommandBuilder()
     );
 
 exports.commandName = COMMAND_NAME;
-exports.handlers = [{ type: "command", func: reset }];
+exports.handlers = [{ type: "APPLICATION_COMMAND", func: reset }];

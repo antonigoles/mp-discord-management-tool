@@ -98,7 +98,7 @@ exports.sleep = (ms) => {
 };
 
 exports.getGroupName = async (interaction) => {
-    return await Utils.normalizeGroupName(
+    return await this.normalizeGroupName(
         (await interaction.options.getRole("group_name")).name.slice(7)
     );
 };

@@ -10,16 +10,11 @@ const Utils = require("../utils.js");
 const COMMAND_NAME = "poll";
 const DESCRIPTION = "Creates poll";
 
+const emojiTable = "🔴,🟠,🟡,🟢,🔵,🟣,🟤,⚫,⚪,🟥,🟧,🟨,🟩,🟦,🟪,🟫".split(",");
+
 const command_temporary_memory = {};
 
 const poll = async (interaction) => {
-    const emojiTable = "🔴,🟠,🟡,🟢,🔵,🟣,🟤,⚫,⚪,🟥,🟧,🟨,🟩,🟦,🟪,🟫".split(
-        ","
-    );
-
-    if (!interaction.isCommand()) return;
-    if (!(interaction.commandName === COMMAND_NAME)) return;
-
     const member = interaction.member;
 
     if (!(await Utils.isAdmin(member)) && !Utils.isTeacher(member)) {
@@ -93,65 +88,63 @@ const poll = async (interaction) => {
     });
 
     // handle input select interaction
-    client.on("interactionCreate", async (interaction) => {
-        if (!interaction.isSelectMenu()) return;
-        if (interaction.customId != "select-poll-answer") return;
+};
+const pollButton = async (interaction) => {
+    if (!interaction.isSelectMenu()) return;
+    if (interaction.customId != "select-poll-answer") return;
 
-        // this is just awful and one day has to go
-        // but not now...
+    // this is just awful and one day has to go
+    // but not now...
 
-        const choice = interaction.values[0].split("-");
-        const timestamp = choice[2];
-        const choiceid = choice[1];
+    const choice = interaction.values[0].split("-");
+    const timestamp = choice[2];
+    const choiceid = choice[1];
 
-        const originalMessage = interaction.message;
+    const originalMessage = interaction.message;
 
-        const pollOptions = [];
+    const pollOptions = [];
 
-        if (command_temporary_memory[timestamp] == undefined) {
-            await interaction.reply({
-                content: "Ta ankieta już wygasła :(",
-                ephemeral: true,
-            });
-            return;
-        }
+    if (command_temporary_memory[timestamp] == undefined) {
+        await interaction.reply({
+            content: "Ta ankieta już wygasła :(",
+            ephemeral: true,
+        });
+        return;
+    }
 
-        // if user has choosen this option already we want to remove his vote
-        let check = command_temporary_memory[timestamp][choiceid].includes(
+    // if user has choosen this option already we want to remove his vote
+    let check = command_temporary_memory[timestamp][choiceid].includes(
+        interaction.user.id
+    );
+
+    for (let i = 1; i <= command_temporary_memory[timestamp]["size"]; i++) {
+        // XD
+        pollOptions.push(i);
+        command_temporary_memory[timestamp][i] = Utils.removeItemOnce(
+            command_temporary_memory[timestamp][i],
             interaction.user.id
         );
+    }
+    if (!check)
+        command_temporary_memory[timestamp][choiceid].push(interaction.user.id);
 
-        for (let i = 1; i <= command_temporary_memory[timestamp]["size"]; i++) {
-            // XD
-            pollOptions.push(i);
-            command_temporary_memory[timestamp][i] = Utils.removeItemOnce(
-                command_temporary_memory[timestamp][i],
-                interaction.user.id
-            );
-        }
-        if (!check)
-            command_temporary_memory[timestamp][choiceid].push(
-                interaction.user.id
-            );
+    originalMessage.embeds[0].setFooter({
+        text: `${pollOptions
+            .map(
+                (opt, idx) =>
+                    `${emojiTable[idx]}: ${
+                        command_temporary_memory[timestamp][idx + 1].length
+                    }`
+            )
+            .join(" ")}`,
+    });
 
-        originalMessage.embeds[0].setFooter({
-            text: `${pollOptions
-                .map(
-                    (opt, idx) =>
-                        `${emojiTable[idx]}: ${
-                            command_temporary_memory[timestamp][idx + 1].length
-                        }`
-                )
-                .join(" ")}`,
-        });
-
-        originalMessage.content = " ";
-        interaction.update({
-            content: " ",
-            components: originalMessage.components,
-            embeds: originalMessage.embeds,
-            fetchReply: true,
-        });
+    originalMessage.content = " ";
+    interaction.update({
+        content: " ",
+        components: originalMessage.components,
+        embeds: originalMessage.embeds,
+        fetchReply: true,
     });
 };
 
@@ -208,4 +201,7 @@ exports.command = new SlashCommandBuilder()
     );
 
 exports.commandName = COMMAND_NAME;
-exports.handlers = [{ type: "command", func: poll }];
+exports.handlers = [
+    { type: "APPLICATION_COMMAND", func: poll },
+    { type: "MESSAGE_COMPONENT", func: pollButton },
+];
