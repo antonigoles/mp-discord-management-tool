@@ -1,7 +1,7 @@
 const { REST } = require("@discordjs/rest");
 const { env } = require("./config.js");
 const { Routes } = require("discord-api-types/v9");
-const { Client, Intents, Interaction } = require("discord.js");
+const { Client, Intents } = require("discord.js");
 const { databaseManager } = require("./database/databaseManager");
 const Utils = require("./utils.js");
 
@@ -14,14 +14,21 @@ const client = new Client({
 });
 
 let commands = [];
+let command_handlers = { command: {}, button: {} };
 
-const normalizedPath = require("path").join(__dirname, "commands");
+const normalized_path = require("path").join(__dirname, "commands");
 
 require("fs")
-  .readdirSync(normalizedPath)
+  .readdirSync(normalized_path)
   .forEach((file) => {
     commands.push(require("./commands/" + file));
   });
+
+commands.map((data) => {
+  data.handlers.map((handle) => {
+    command_handlers[handle.type][data.commandName] = handle.func;
+  });
+});
 
 // TODO: Refactor this
 // const commands = [
@@ -48,23 +55,7 @@ require("fs")
 //   cmd.registerHandler(client);
 // });
 
-let commandHandlers = { command: {}, button: {} };
-commands.map((data) => {
-  data.handlers.map((handle) => {
-    commandHandlers[handle.type][data.commandName] = handle.func;
-  });
-});
-
-client.on("interactionCreate", async (interaction) => {
-  let type = "";
-  if (interaction.isCommand()) type = "command";
-  if (interaction.isButton()) type = "button";
-
-  if (type == "") return;
-  if (!commandHandlers.hasOwnProperty("type")) return;
-});
-
-// console.log(commandHandlers);
+// console.log(command_handlers);
 client.on("ready", () => {
   Utils.logDebug(`Logged in as ${client.user.tag}!`);
 });
@@ -85,6 +76,17 @@ client.on("guildMemberAdd", async (member) => {
   }
 });
 
+client.on("interactionCreate", async (interaction) => {
+  let type = "";
+  if (interaction.isCommand()) type = "command";
+  if (interaction.isButton()) type = "button";
+
+  if (type == "") return;
+  if (!command_handlers.hasOwnProperty(type)) return;
+  if (!command_handlers[type].hasOwnProperty(interaction.commandName)) return;
+
+  command_handlers[type][interaction.commandName];
+});
 // perform asynchronous queue loop
 // created specifically to be able to handle
 // big bulk updates without constantly getting timed out
@@ -107,7 +109,7 @@ client.on("guildMemberAdd", async (member) => {
 
 client.login(env.BOT_TOKEN);
 
-const parsed_body = [...commands.map((e) => e.command.toJSON())];
+const parsed_slash_commands = [...commands.map((e) => e.command.toJSON())];
 
 (async (client) => {
   const rest = new REST({ version: "9" }).setToken(env.BOT_TOKEN);
@@ -117,13 +119,13 @@ const parsed_body = [...commands.map((e) => e.command.toJSON())];
     if (process.argv.includes("production-mode")) {
       Utils.logDebug("Running in PRODUCTION mode");
       await rest.put(Routes.applicationCommands(env.APP_ID), {
-        body: parsed_body,
+        body: parsed_slash_commands,
       });
     } else {
       Utils.logDebug("Running in DEVELOPER mode");
       await rest.put(
         Routes.applicationGuildCommands(env.APP_ID, env.DEV_SERVER_ID),
-        { body: parsed_body }
+        { body: parsed_slash_commands }
       );
     }
 
