@@ -10,8 +10,9 @@ const registerHandler = async (client) => {
     if (!interaction.isCommand()) return;
     if (!(interaction.commandName === COMMAND_NAME)) return;
 
-    const member = interaction.member;
     // command stuff
+    const member = interaction.member;
+
     if (!(await Utils.isAdmin(member))) {
       interaction.reply({ content: "Nie masz permisji" });
       return;

@@ -10,8 +10,9 @@ const registerHandler = async (client) => {
     if (!interaction.isCommand()) return;
     if (!(interaction.commandName === COMMAND_NAME)) return;
 
-    const groupName = Utils.getGroupName(interaction);
     const member = interaction.member;
+    const groupName = Utils.getGroupName(interaction);
+
     if (
       !(await Utils.isAdmin(member)) &&
       !Utils.isGroupsTeacher(member, groupName)

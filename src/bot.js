@@ -1,9 +1,10 @@
 const { REST } = require("@discordjs/rest");
 const { env } = require("./config.js");
 const { Routes } = require("discord-api-types/v9");
-const Utils = require("./utils.js");
 const { Client, Intents } = require("discord.js");
 const { databaseManager } = require("./database/databaseManager");
+const Utils = require("./utils.js");
+
 const client = new Client({
   intents: [
     Intents.FLAGS.GUILDS,
@@ -89,11 +90,12 @@ client.on("guildMemberAdd", async (member) => {
 
 client.login(env.BOT_TOKEN);
 
+const parsed_body = [...commands.map((e) => e.command.toJSON())];
+
 (async (client) => {
   const rest = new REST({ version: "9" }).setToken(env.BOT_TOKEN);
   try {
     Utils.logDebug("Started refreshing application (/) commands.");
-    let parsed_body = [...commands.map((e) => e.command.toJSON())];
     // Utils.logDebug(parsed_body)
     if (process.argv.includes("production-mode")) {
       Utils.logDebug("Running in PRODUCTION mode");

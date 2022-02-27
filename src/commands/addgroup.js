@@ -10,9 +10,10 @@ const registerHandler = (client) => {
     if (!interaction.isCommand()) return;
     if (!(interaction.commandName === COMMAND_NAME)) return;
 
-    const memeber = interaction.member;
-    const groupName = await Utils.getGroupName(interaction);
     // command stuff
+    const member = interaction.member;
+    const groupName = await Utils.getGroupName(interaction);
+
     if (!(await Utils.isAdmin(member))) {
       interaction.reply({ content: "Nie masz permisji" });
       return;

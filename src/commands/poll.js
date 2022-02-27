@@ -21,6 +21,7 @@ const registerHandler = async (client) => {
     if (!(interaction.commandName === COMMAND_NAME)) return;
 
     const member = interaction.member;
+
     if (!(await Utils.isAdmin(member)) && !Utils.isTeacher(member)) {
       interaction.reply({ content: "Nie jesteś Nauczycielem!" });
       return;
