@@ -1,78 +1,72 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { ApplicationCommandManager } = require("discord.js");
 const { databaseManager } = require("../database/databaseManager.js");
 const Utils = require("../utils.js");
 
 const COMMAND_NAME = "reset";
 const DESCRIPTION = "Resets everything";
 
-const registerHandler = (client) => {
-  client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isCommand()) return;
-    if (!(interaction.commandName === COMMAND_NAME)) return;
-    // command stuff
-    const member = interaction.member;
+const reset = async (interaction) => {
+  if (!interaction.isCommand()) return;
+  if (!(interaction.commandName === COMMAND_NAME)) return;
+  // command stuff
+  const member = interaction.member;
+  if (!(await Utils.isAdmin(member))) {
+    interaction.reply({ content: "Nie masz permisji" });
+    return;
+  }
 
-    if (!(await Utils.isAdmin(member))) {
-      interaction.reply({ content: "Nie masz permisji" });
-      return;
-    }
+  if (!(await databaseManager.isGuildSettedUp(interaction.guild.id))) {
+    interaction.reply({
+      content: `😣 Serwer jeszcze nie jest zsetupowany, ${"`/setup`"} by zsetupować`,
+    });
+    return;
+  }
 
-    if (!(await databaseManager.isGuildSettedUp(interaction.guild.id))) {
-      interaction.reply({
-        content: `😣 Serwer jeszcze nie jest zsetupowany, ${"`/setup`"} by zsetupować`,
+  interaction.reply({ content: `❗ Resetowanie...` });
+  if (interaction.options.getSubcommand() === "full") {
+    await databaseManager.setGuildSetupStatus(interaction.guild.id, false);
+    await interaction.guild.roles.fetch().then((roles) => {
+      roles.map((role) => {
+        const r_name = role.name;
+        if (
+          Utils.includesAny(r_name, [
+            "Grupa: ",
+            "Admin",
+            "Uczen",
+            "Nauczyciel",
+            "Gosc",
+          ])
+        )
+          interaction.guild.roles.delete(role.id, "setup reset");
       });
-      return;
-    }
+    });
+  } else {
+    await interaction.guild.roles.fetch().then((roles) => {
+      roles.map((role) => {
+        const r_name = role.name;
+        if (
+          Utils.includesAny(r_name, [
+            "Grupa: ",
+            "- Admin",
+            "- Uczen",
+            "- Nauczyciel",
+            "- Gosc",
+          ])
+        )
+          interaction.guild.roles.delete(role.id, "group reset");
+      });
+    });
+  }
 
-    interaction.reply({ content: `❗ Resetowanie...` });
-    if (interaction.options.getSubcommand() === "full") {
-      await databaseManager.setGuildSetupStatus(interaction.guild.id, false);
-      await interaction.guild.roles.fetch().then((roles) => {
-        roles.map((role) => {
-          const r_name = role.name;
-          if (
-            Utils.includesAny(r_name, [
-              "Grupa: ",
-              "Admin",
-              "Uczen",
-              "Nauczyciel",
-              "Gosc",
-            ])
-          )
-            interaction.guild.roles.delete(role.id, "setup reset");
+  databaseManager.getAllGroupsFromGuild(interaction.guild.id).then((groups) => {
+    groups.map((group) => {
+      group.channels.map((channelId) => {
+        interaction.guild.channels.fetch(channelId).then((channel) => {
+          channel.delete();
         });
       });
-    } else {
-      await interaction.guild.roles.fetch().then((roles) => {
-        roles.map((role) => {
-          const r_name = role.name;
-          if (
-            Utils.includesAny(r_name, [
-              "Grupa: ",
-              "- Admin",
-              "- Uczen",
-              "- Nauczyciel",
-              "- Gosc",
-            ])
-          )
-            interaction.guild.roles.delete(role.id, "group reset");
-        });
-      });
-    }
-
-    databaseManager
-      .getAllGroupsFromGuild(interaction.guild.id)
-      .then((groups) => {
-        groups.map((group) => {
-          group.channels.map((channelId) => {
-            interaction.guild.channels.fetch(channelId).then((channel) => {
-              channel.delete();
-            });
-          });
-          databaseManager.deleteGroup(interaction.guild.id, group.name);
-        });
-      });
+      databaseManager.deleteGroup(interaction.guild.id, group.name);
+    });
   });
 };
 
@@ -86,4 +80,5 @@ exports.command = new SlashCommandBuilder()
     subcommand.setName("groups").setDescription("Resets groups only")
   );
 
-exports.registerHandler = registerHandler;
+exports.commandName = COMMAND_NAME;
+exports.handlers = [{ type: "command", func: reset }];

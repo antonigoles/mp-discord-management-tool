@@ -1,7 +1,7 @@
 const { REST } = require("@discordjs/rest");
 const { env } = require("./config.js");
 const { Routes } = require("discord-api-types/v9");
-const { Client, Intents } = require("discord.js");
+const { Client, Intents, Interaction } = require("discord.js");
 const { databaseManager } = require("./database/databaseManager");
 const Utils = require("./utils.js");
 
@@ -20,7 +20,7 @@ const normalizedPath = require("path").join(__dirname, "commands");
 require("fs")
   .readdirSync(normalizedPath)
   .forEach((file) => {
-    com.push(require("./commands/" + file));
+    commands.push(require("./commands/" + file));
   });
 
 // TODO: Refactor this
@@ -40,14 +40,31 @@ require("fs")
 // TODO: Move every command file from format: register => { client.on('interaction' ) }
 // to client.on('interaction', () => register() )
 // (safer for memory)
-client.setMaxListeners(30);
+// client.setMaxListeners(30);
 
 // register comamnds handlers
 
-commands.map((cmd) => {
-  cmd.registerHandler(client);
+// commands.map((cmd) => {
+//   cmd.registerHandler(client);
+// });
+
+let commandHandlers = { command: {}, button: {} };
+commands.map((data) => {
+  data.handlers.map((handle) => {
+    commandHandlers[handle.type][data.commandName] = handle.func;
+  });
 });
 
+client.on("interactionCreate", async (interaction) => {
+  let type = "";
+  if (interaction.isCommand()) type = "command";
+  if (interaction.isButton()) type = "button";
+
+  if (type == "") return;
+  if (!commandHandlers.hasOwnProperty("type")) return;
+});
+
+// console.log(commandHandlers);
 client.on("ready", () => {
   Utils.logDebug(`Logged in as ${client.user.tag}!`);
 });

@@ -5,67 +5,63 @@ const Utils = require("../utils.js");
 const COMMAND_NAME = "addstudents";
 const DESCRIPTION = "Adds multiple students at once (min 1 - max 6)";
 
-const registerHandler = async (client) => {
-  client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isCommand()) return;
-    if (!(interaction.commandName === COMMAND_NAME)) return;
+const addStudents = async (interaction) => {
+  if (!interaction.isCommand()) return;
+  if (!(interaction.commandName === COMMAND_NAME)) return;
 
-    const member = interaction.member;
-    const groupName = await Utils.getGroupName(interaction);
+  const member = interaction.member;
+  const groupName = await Utils.getGroupName(interaction);
 
-    if (
-      !(await Utils.isAdmin(member)) &&
-      !Utils.isGroupsTeacher(member, groupName)
-    ) {
-      interaction.reply({ content: "Nie jesteś Nauczycielem tej grupy!" });
-      return;
+  if (
+    !(await Utils.isAdmin(member)) &&
+    !Utils.isGroupsTeacher(member, groupName)
+  ) {
+    interaction.reply({ content: "Nie jesteś Nauczycielem tej grupy!" });
+    return;
+  }
+
+  if (!(await databaseManager.isGroupInDb(interaction.guild.id, groupName))) {
+    interaction.reply({ content: "😨 Taka grupa nie istnieje" });
+    return;
+  }
+
+  const futureStudents = [];
+  for (let i = 1; i < 7; i++) {
+    if (interaction.options.getUser(`discord_user${i}`) != null) {
+      futureStudents.push(interaction.options.getUser(`discord_user${i}`));
     }
+  }
 
-    if (!(await databaseManager.isGroupInDb(interaction.guild.id, groupName))) {
-      interaction.reply({ content: "😨 Taka grupa nie istnieje" });
-      return;
-    }
+  interaction.reply({
+    content: `🥰 Dodano uczniów do grupy ${"`" + groupName + "`"}`,
+  });
 
-    const futureStudents = [];
-    for (let i = 1; i < 7; i++) {
-      if (interaction.options.getUser(`discord_user${i}`) != null) {
-        futureStudents.push(interaction.options.getUser(`discord_user${i}`));
-      }
-    }
+  try {
+    futureStudents.map(async (futureStudent) => {
+      const groupStudentRole = await interaction.guild.roles.cache.find(
+        (role) => role.name === +" - Uczen"
+      );
 
-    interaction.reply({
-      content: `🥰 Dodano uczniów do grupy ${"`" + groupName + "`"}`,
-    });
-
-    try {
-      futureStudents.map(async (futureStudent) => {
-        const groupStudentRole = await interaction.guild.roles.cache.find(
-          (role) => role.name === +" - Uczen"
-        );
-
-        await databaseManager
-          .addStudentToGroup(groupName, interaction.guild.id, futureStudent.id)
-          .then(() => {
-            interaction.guild.roles.fetch().then((roles) => {
-              interaction.guild.members
-                .fetch(futureStudent.id)
-                .then((member) => {
-                  roles.map((role) => {
-                    if (
-                      role.name === groupName + " - Uczen" ||
-                      role.name === "Uczen"
-                    )
-                      member.roles.add(role);
-                  });
-                });
+      await databaseManager
+        .addStudentToGroup(groupName, interaction.guild.id, futureStudent.id)
+        .then(() => {
+          interaction.guild.roles.fetch().then((roles) => {
+            interaction.guild.members.fetch(futureStudent.id).then((member) => {
+              roles.map((role) => {
+                if (
+                  role.name === groupName + " - Uczen" ||
+                  role.name === "Uczen"
+                )
+                  member.roles.add(role);
+              });
             });
           });
-      });
-    } catch (err) {
-      interaction.reply({ content: "😨 wystąpił błąd po stronie serwera" });
-      console.log(err);
-    }
-  });
+        });
+    });
+  } catch (err) {
+    interaction.reply({ content: "😨 wystąpił błąd po stronie serwera" });
+    console.log(err);
+  }
 };
 
 exports.command = new SlashCommandBuilder()
@@ -114,4 +110,5 @@ exports.command = new SlashCommandBuilder()
       .setRequired(false)
   );
 
-exports.registerHandler = registerHandler;
+exports.commandName = COMMAND_NAME;
+exports.handlers = [{ type: "command", func: addStudents }];

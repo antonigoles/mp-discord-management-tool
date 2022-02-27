@@ -12,85 +12,84 @@ const DESCRIPTION = "Creates poll";
 
 const command_temporary_memory = {};
 
-const registerHandler = async (client) => {
+const poll = async (interaction) => {
   const emojiTable = "🔴,🟠,🟡,🟢,🔵,🟣,🟤,⚫,⚪,🟥,🟧,🟨,🟩,🟦,🟪,🟫".split(
     ","
   );
-  client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isCommand()) return;
-    if (!(interaction.commandName === COMMAND_NAME)) return;
 
-    const member = interaction.member;
+  if (!interaction.isCommand()) return;
+  if (!(interaction.commandName === COMMAND_NAME)) return;
 
-    if (!(await Utils.isAdmin(member)) && !Utils.isTeacher(member)) {
-      interaction.reply({ content: "Nie jesteś Nauczycielem!" });
-      return;
+  const member = interaction.member;
+
+  if (!(await Utils.isAdmin(member)) && !Utils.isTeacher(member)) {
+    interaction.reply({ content: "Nie jesteś Nauczycielem!" });
+    return;
+  }
+
+  const pollOptions = [];
+  for (let i = 1; i <= 15; i++) {
+    if (interaction.options.getString(`option${i}`) != null) {
+      pollOptions.push(interaction.options.getString(`option${i}`));
     }
+  }
 
-    const pollOptions = [];
-    for (let i = 1; i <= 15; i++) {
-      if (interaction.options.getString(`option${i}`) != null) {
-        pollOptions.push(interaction.options.getString(`option${i}`));
-      }
-    }
-
-    const title = interaction.options.getString("text");
-    const pollEmbed = new MessageEmbed()
-      .setAuthor({
-        name: "Ankieta",
-        iconURL:
-          "https://www.seekpng.com/png/full/67-671514_learn-more-free-survey-icon.png",
-      })
-      .setColor("#ff1d00")
-      .setTitle(title)
-      .addFields([
-        {
-          name: `*Opcje:*`,
-          value: `${pollOptions
-            .map((opt, idx) => {
-              return `${emojiTable[idx]} - \`${opt}\``;
-            })
-            .join("\n")}`,
-        },
-      ])
-      .setFooter({
-        text: `${pollOptions
+  const title = interaction.options.getString("text");
+  const pollEmbed = new MessageEmbed()
+    .setAuthor({
+      name: "Ankieta",
+      iconURL:
+        "https://www.seekpng.com/png/full/67-671514_learn-more-free-survey-icon.png",
+    })
+    .setColor("#ff1d00")
+    .setTitle(title)
+    .addFields([
+      {
+        name: `*Opcje:*`,
+        value: `${pollOptions
           .map((opt, idx) => {
-            return `${emojiTable[idx]}: 0`;
+            return `${emojiTable[idx]} - \`${opt}\``;
           })
-          .join(" ")}`,
-      });
-
-    const timestamp = Date.now();
-
-    command_temporary_memory[timestamp] = {
-      size: pollOptions.length,
-    };
-    pollOptions.map((_, idx) => {
-      command_temporary_memory[timestamp][idx + 1] = [];
+          .join("\n")}`,
+      },
+    ])
+    .setFooter({
+      text: `${pollOptions
+        .map((opt, idx) => {
+          return `${emojiTable[idx]}: 0`;
+        })
+        .join(" ")}`,
     });
 
-    const row = new MessageActionRow().addComponents([
-      new MessageSelectMenu()
-        .setCustomId("select-poll-answer")
-        .setPlaceholder("Brak odpowiedzi")
-        .addOptions([
-          ...pollOptions.map((opt, idx) => {
-            return {
-              label: `${emojiTable[idx]} ${opt}`,
-              description: `Opcja ${idx + 1}`,
-              value: `option-${idx + 1}-${timestamp}`,
-            };
-          }),
-        ]),
-    ]);
+  const timestamp = Date.now();
 
-    const interactionMessage = await interaction.reply({
-      content: " ",
-      embeds: [pollEmbed],
-      fetchReply: true,
-      components: [row],
-    });
+  command_temporary_memory[timestamp] = {
+    size: pollOptions.length,
+  };
+  pollOptions.map((_, idx) => {
+    command_temporary_memory[timestamp][idx + 1] = [];
+  });
+
+  const row = new MessageActionRow().addComponents([
+    new MessageSelectMenu()
+      .setCustomId("select-poll-answer")
+      .setPlaceholder("Brak odpowiedzi")
+      .addOptions([
+        ...pollOptions.map((opt, idx) => {
+          return {
+            label: `${emojiTable[idx]} ${opt}`,
+            description: `Opcja ${idx + 1}`,
+            value: `option-${idx + 1}-${timestamp}`,
+          };
+        }),
+      ]),
+  ]);
+
+  const interactionMessage = await interaction.reply({
+    content: " ",
+    embeds: [pollEmbed],
+    fetchReply: true,
+    components: [row],
   });
 
   // handle input select interaction
@@ -206,4 +205,5 @@ exports.command = new SlashCommandBuilder()
     option.setName("option15").setDescription("option15").setRequired(false)
   );
 
-exports.registerHandler = registerHandler;
+exports.commandName = COMMAND_NAME;
+exports.handlers = [{ type: "command", func: poll }];
