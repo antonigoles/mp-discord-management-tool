@@ -6,28 +6,31 @@ const { databaseManager } = require("./database/databaseManager");
 const Utils = require("./utils.js");
 
 const client = new Client({
-  intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_MEMBERS,
-  ],
+    intents: [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MEMBERS,
+    ],
 });
+
+const normalized_path = require("path").join(__dirname, "commands");
 
 let commands = [];
 let command_handlers = { command: {}, button: {} };
 
-const normalized_path = require("path").join(__dirname, "commands");
-
+//reads and imports files from ./commands directory
 require("fs")
-  .readdirSync(normalized_path)
-  .forEach((file) => {
-    commands.push(require("./commands/" + file));
-  });
+    .readdirSync(normalized_path)
+    .forEach((file) => {
+        commands.push(require("./commands/" + file));
+    });
 
+//maps imported commands to command_handlers so they are grouped by type
+//this allows to make only one client.on listener for all commands
 commands.map((data) => {
-  data.handlers.map((handle) => {
-    command_handlers[handle.type][data.commandName] = handle.func;
-  });
+    data.handlers.map((handle) => {
+        command_handlers[handle.type][data.commandName] = handle.func;
+    });
 });
 
 // TODO: Refactor this
@@ -57,35 +60,37 @@ commands.map((data) => {
 
 // console.log(command_handlers);
 client.on("ready", () => {
-  Utils.logDebug(`Logged in as ${client.user.tag}!`);
+    Utils.logDebug(`Logged in as ${client.user.tag}!`);
 });
 
 client.on("rateLimit", (info) => {
-  Utils.logDebug("rate limit: \n" + JSON.stringify(info));
+    Utils.logDebug("rate limit: \n" + JSON.stringify(info));
 });
 
 client.on("guildMemberAdd", async (member) => {
-  Utils.logDebug("New user joined");
-  if (await databaseManager.isGuildSettedUp(member.guild.id)) {
-    Utils.logDebug("Asigning Guest role");
-    await member.guild.roles.fetch().then((roles) => {
-      roles.map((role) => {
-        if (role.name === "Gosc") member.roles.add(role);
-      });
-    });
-  }
+    Utils.logDebug("New user joined");
+    if (await databaseManager.isGuildSettedUp(member.guild.id)) {
+        Utils.logDebug("Asigning Guest role");
+        await member.guild.roles.fetch().then((roles) => {
+            roles.map((role) => {
+                if (role.name === "Gosc") member.roles.add(role);
+            });
+        });
+    }
 });
 
 client.on("interactionCreate", async (interaction) => {
-  let type = "";
-  if (interaction.isCommand()) type = "command";
-  if (interaction.isButton()) type = "button";
+    let type = "";
+    //hardcoded :(
+    //can make some sort of config file with types and stuff
+    if (interaction.isCommand()) type = "command";
+    if (interaction.isButton()) type = "button";
 
-  if (type == "") return;
-  if (!command_handlers.hasOwnProperty(type)) return;
-  if (!command_handlers[type].hasOwnProperty(interaction.commandName)) return;
+    if (type == "") return;
+    if (!command_handlers.hasOwnProperty(type)) return;
+    if (!command_handlers[type].hasOwnProperty(interaction.commandName)) return;
 
-  command_handlers[type][interaction.commandName];
+    command_handlers[type][interaction.commandName];
 });
 // perform asynchronous queue loop
 // created specifically to be able to handle
@@ -112,25 +117,25 @@ client.login(env.BOT_TOKEN);
 const parsed_slash_commands = [...commands.map((e) => e.command.toJSON())];
 
 (async (client) => {
-  const rest = new REST({ version: "9" }).setToken(env.BOT_TOKEN);
-  try {
-    Utils.logDebug("Started refreshing application (/) commands.");
-    // Utils.logDebug(parsed_body)
-    if (process.argv.includes("production-mode")) {
-      Utils.logDebug("Running in PRODUCTION mode");
-      await rest.put(Routes.applicationCommands(env.APP_ID), {
-        body: parsed_slash_commands,
-      });
-    } else {
-      Utils.logDebug("Running in DEVELOPER mode");
-      await rest.put(
-        Routes.applicationGuildCommands(env.APP_ID, env.DEV_SERVER_ID),
-        { body: parsed_slash_commands }
-      );
-    }
+    const rest = new REST({ version: "9" }).setToken(env.BOT_TOKEN);
+    try {
+        Utils.logDebug("Started refreshing application (/) commands.");
+        // Utils.logDebug(parsed_body)
+        if (process.argv.includes("production-mode")) {
+            Utils.logDebug("Running in PRODUCTION mode");
+            await rest.put(Routes.applicationCommands(env.APP_ID), {
+                body: parsed_slash_commands,
+            });
+        } else {
+            Utils.logDebug("Running in DEVELOPER mode");
+            await rest.put(
+                Routes.applicationGuildCommands(env.APP_ID, env.DEV_SERVER_ID),
+                { body: parsed_slash_commands }
+            );
+        }
 
-    Utils.logDebug("Successfully reloaded application (/) commands.");
-  } catch (error) {
-    Utils.logDebug(error);
-  }
+        Utils.logDebug("Successfully reloaded application (/) commands.");
+    } catch (error) {
+        Utils.logDebug(error);
+    }
 })(client);

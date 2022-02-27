@@ -6,109 +6,117 @@ const COMMAND_NAME = "addstudents";
 const DESCRIPTION = "Adds multiple students at once (min 1 - max 6)";
 
 const addStudents = async (interaction) => {
-  if (!interaction.isCommand()) return;
-  if (!(interaction.commandName === COMMAND_NAME)) return;
+    if (!interaction.isCommand()) return;
+    if (!(interaction.commandName === COMMAND_NAME)) return;
 
-  const member = interaction.member;
-  const groupName = await Utils.getGroupName(interaction);
+    const member = interaction.member;
+    const groupName = await Utils.getGroupName(interaction);
 
-  if (
-    !(await Utils.isAdmin(member)) &&
-    !Utils.isGroupsTeacher(member, groupName)
-  ) {
-    interaction.reply({ content: "Nie jesteś Nauczycielem tej grupy!" });
-    return;
-  }
-
-  if (!(await databaseManager.isGroupInDb(interaction.guild.id, groupName))) {
-    interaction.reply({ content: "😨 Taka grupa nie istnieje" });
-    return;
-  }
-
-  const futureStudents = [];
-  for (let i = 1; i < 7; i++) {
-    if (interaction.options.getUser(`discord_user${i}`) != null) {
-      futureStudents.push(interaction.options.getUser(`discord_user${i}`));
+    if (
+        !(await Utils.isAdmin(member)) &&
+        !Utils.isGroupsTeacher(member, groupName)
+    ) {
+        interaction.reply({ content: "Nie jesteś Nauczycielem tej grupy!" });
+        return;
     }
-  }
 
-  interaction.reply({
-    content: `🥰 Dodano uczniów do grupy ${"`" + groupName + "`"}`,
-  });
+    if (!(await databaseManager.isGroupInDb(interaction.guild.id, groupName))) {
+        interaction.reply({ content: "😨 Taka grupa nie istnieje" });
+        return;
+    }
 
-  try {
-    futureStudents.map(async (futureStudent) => {
-      const groupStudentRole = await interaction.guild.roles.cache.find(
-        (role) => role.name === +" - Uczen"
-      );
+    const futureStudents = [];
+    for (let i = 1; i < 7; i++) {
+        if (interaction.options.getUser(`discord_user${i}`) != null) {
+            futureStudents.push(
+                interaction.options.getUser(`discord_user${i}`)
+            );
+        }
+    }
 
-      await databaseManager
-        .addStudentToGroup(groupName, interaction.guild.id, futureStudent.id)
-        .then(() => {
-          interaction.guild.roles.fetch().then((roles) => {
-            interaction.guild.members.fetch(futureStudent.id).then((member) => {
-              roles.map((role) => {
-                if (
-                  role.name === groupName + " - Uczen" ||
-                  role.name === "Uczen"
-                )
-                  member.roles.add(role);
-              });
-            });
-          });
-        });
+    interaction.reply({
+        content: `🥰 Dodano uczniów do grupy ${"`" + groupName + "`"}`,
     });
-  } catch (err) {
-    interaction.reply({ content: "😨 wystąpił błąd po stronie serwera" });
-    console.log(err);
-  }
+
+    try {
+        futureStudents.map(async (futureStudent) => {
+            const groupStudentRole = await interaction.guild.roles.cache.find(
+                (role) => role.name === +" - Uczen"
+            );
+
+            await databaseManager
+                .addStudentToGroup(
+                    groupName,
+                    interaction.guild.id,
+                    futureStudent.id
+                )
+                .then(() => {
+                    interaction.guild.roles.fetch().then((roles) => {
+                        interaction.guild.members
+                            .fetch(futureStudent.id)
+                            .then((member) => {
+                                roles.map((role) => {
+                                    if (
+                                        role.name === groupName + " - Uczen" ||
+                                        role.name === "Uczen"
+                                    )
+                                        member.roles.add(role);
+                                });
+                            });
+                    });
+                });
+        });
+    } catch (err) {
+        interaction.reply({ content: "😨 wystąpił błąd po stronie serwera" });
+        console.log(err);
+    }
 };
 
 exports.command = new SlashCommandBuilder()
-  .setName(COMMAND_NAME)
-  .setDescription(DESCRIPTION)
-  .addRoleOption((option) =>
-    option
-      .setName("group_name")
-      .setDescription("The name of the group (must be unique)")
-      .setRequired(true)
-  )
-  .addUserOption((option) =>
-    option
-      .setName("discord_user1")
-      .setDescription("The @ of the user you want to assign as a student")
-      .setRequired(true)
-  )
-  .addUserOption((option) =>
-    option
-      .setName("discord_user2")
-      .setDescription("The @ of the user you want to assign as a student")
-      .setRequired(false)
-  )
-  .addUserOption((option) =>
-    option
-      .setName("discord_user3")
-      .setDescription("The @ of the user you want to assign as a student")
-      .setRequired(false)
-  )
-  .addUserOption((option) =>
-    option
-      .setName("discord_user4")
-      .setDescription("The @ of the user you want to assign as a student")
-      .setRequired(false)
-  )
-  .addUserOption((option) =>
-    option
-      .setName("discord_user5")
-      .setDescription("The @ of the user you want to assign as a student")
-      .setRequired(false)
-  )
-  .addUserOption((option) =>
-    option
-      .setName("discord_user6")
-      .setDescription("The @ of the user you want to assign as a student")
-      .setRequired(false)
-  );
+    .setName(COMMAND_NAME)
+    .setDescription(DESCRIPTION)
+    .addRoleOption((option) =>
+        option
+            .setName("group_name")
+            .setDescription("The name of the group (must be unique)")
+            .setRequired(true)
+    )
+    .addUserOption((option) =>
+        option
+            .setName("discord_user1")
+            .setDescription("The @ of the user you want to assign as a student")
+            .setRequired(true)
+    )
+    .addUserOption((option) =>
+        option
+            .setName("discord_user2")
+            .setDescription("The @ of the user you want to assign as a student")
+            .setRequired(false)
+    )
+    .addUserOption((option) =>
+        option
+            .setName("discord_user3")
+            .setDescription("The @ of the user you want to assign as a student")
+            .setRequired(false)
+    )
+    .addUserOption((option) =>
+        option
+            .setName("discord_user4")
+            .setDescription("The @ of the user you want to assign as a student")
+            .setRequired(false)
+    )
+    .addUserOption((option) =>
+        option
+            .setName("discord_user5")
+            .setDescription("The @ of the user you want to assign as a student")
+            .setRequired(false)
+    )
+    .addUserOption((option) =>
+        option
+            .setName("discord_user6")
+            .setDescription("The @ of the user you want to assign as a student")
+            .setRequired(false)
+    );
 
 exports.commandName = COMMAND_NAME;
 exports.handlers = [{ type: "command", func: addStudents }];
