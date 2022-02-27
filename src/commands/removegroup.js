@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const Utils = require("../utils.js");
 const { databaseManager } = require("../database/databaseManager.js");
 const { includesAny } = require("../utils.js");
+const Utils = require("../utils.js");
 
 const COMMAND_NAME = "removegroup";
 const DESCRIPTION = "Removes group";

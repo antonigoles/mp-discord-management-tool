@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { databaseManager } = require("../database/databaseManager.js");
 const Utils = require("../utils.js");
+
 const COMMAND_NAME = "removeteacher";
 const DESCRIPTION = "Removes teacher from group";
 

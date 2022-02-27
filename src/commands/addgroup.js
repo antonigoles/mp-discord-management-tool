@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const Utils = require("../utils.js");
 const { databaseManager } = require("../database/databaseManager.js");
+const Utils = require("../utils.js");
 
 const COMMAND_NAME = "addgroup";
 const DESCRIPTION = "Adds a group";
@@ -11,6 +11,7 @@ const registerHandler = (client) => {
     if (!(interaction.commandName === COMMAND_NAME)) return;
 
     const memeber = interaction.member;
+    const groupName = await Utils.getGroupName(interaction);
     // command stuff
     if (!(await Utils.isAdmin(member))) {
       interaction.reply({ content: "Nie masz permisji" });
@@ -23,8 +24,6 @@ const registerHandler = (client) => {
       });
       return;
     }
-
-    const groupName = await Utils.getGroupName(interaction);
 
     if (await databaseManager.isGroupInDb(interaction.guild.id, groupName)) {
       interaction.reply({ content: `😣 Ta grupa już istnieje!!` });

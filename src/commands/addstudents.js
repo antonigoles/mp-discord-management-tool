@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const Utils = require("../utils.js");
 const { databaseManager } = require("../database/databaseManager.js");
+const Utils = require("../utils.js");
 
 const COMMAND_NAME = "addstudents";
 const DESCRIPTION = "Adds multiple students at once (min 1 - max 6)";
