@@ -13,7 +13,7 @@ const registerHandler = async (client) => {
             const groupName = (await interaction.options.getRole("group_name")).name.slice(7)
 
             if ( !(await interaction.member.permissions.has("ADMINISTRATOR", true))
-                &&!(interaction.member.roles.cache.some(role => role.name === groupName + " - Nauczyciel"))
+                &&!(interaction.member.roles.cache.some(role => role.name === `Grupa: ${groupName}`))
             ) {
                 interaction.reply({content: "Nie jesteś Nauczycielem tej grupy!"})
                 return;
@@ -43,12 +43,12 @@ const registerHandler = async (client) => {
                     await databaseManager.removeStudentFromGroup( groupName, interaction.guild.id, futureStudentUser.id )
 
                     const groupStudentRole = await interaction.guild.roles.cache
-                        .find(role => role.name === groupName + " - Uczen")
+                        .find(role => role.name === `Uczen: ${groupName}`)
 
                     const futureStudentMember = await interaction.guild.members.cache.find( m => m.id === futureStudentUser.id)
                     await futureStudentMember.roles.remove( groupStudentRole )
 
-                    if ( !(futureStudentMember.roles.cache.some( role => role.name.includes("- Uczen") ) ) ) {
+                    if ( !(futureStudentMember.roles.cache.some( role => role.name.includes("Uczen:") ) ) ) {
                         const studentRole = await interaction.guild.roles.cache
                             .find(role => role.name === "Uczen")
                         await futureStudentMember.roles.remove( studentRole )

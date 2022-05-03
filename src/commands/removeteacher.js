@@ -34,7 +34,7 @@ const registerHandler = async (client) => {
                 const teacherMember = await interaction.guild.members.cache.find( m => m.id === teacherUser.id)
 
                 const groupTeacherRole = await interaction.guild.roles.cache
-                    .find(role => role.name === groupName + " - Nauczyciel")
+                    .find(role => role.name === `Nauczyciel: ${groupName}`)
 
                 await teacherMember.roles.remove( groupTeacherRole )
 

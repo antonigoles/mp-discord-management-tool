@@ -12,7 +12,7 @@ const registerHandler = async (client) => {
             const groupName = (await interaction.options.getRole("group_name")).name.slice(7)
 
             if ( !(await interaction.member.permissions.has("ADMINISTRATOR", true))
-                &&!(interaction.member.roles.cache.some(role => role.name === groupName + " - Nauczyciel"))
+                &&!(interaction.member.roles.cache.some(role => role.name ===  `Nauczyciel: ${groupName}`))
             ) {
                 interaction.reply({content: "Nie jesteś Nauczycielem tej grupy!"})
                 return;
@@ -37,13 +37,13 @@ const registerHandler = async (client) => {
             try {
                 futureStudents.map(async (futureStudent) => {
                     const groupStudentRole = await interaction.guild.roles.cache
-                        .find(role => role.name === +" - Uczen")
+                        .find(role => role.name === `Uczen: ${groupName}`)
 
                     await databaseManager.addStudentToGroup(groupName, interaction.guild.id, futureStudent.id).then(() => {
                         interaction.guild.roles.fetch().then(roles => {
                             interaction.guild.members.fetch(futureStudent.id).then(member => {
                                 roles.map(role => {
-                                    if (role.name === groupName + " - Uczen" || role.name === "Uczen")
+                                    if (role.name === `Uczen: ${groupName}` || role.name === "Uczen")
                                         member.roles.add(role)
                                 })
                             })

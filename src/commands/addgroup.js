@@ -50,11 +50,11 @@ const registerHandler = (client) => {
                 })
 
                 const studentRole = await interaction.guild.roles.create({
-                    name: `${groupName} - Uczen`,
+                    name: `Uczen: ${groupName}`,
                     color: 'BLUE',
                 })
                 const teacherRole = await interaction.guild.roles.create({
-                    name: `${groupName} - Nauczyciel`,
+                    name: `Nauczyciel: ${groupName}`,
                     color: 'YELLOW',
                 })
 

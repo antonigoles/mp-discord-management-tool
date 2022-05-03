@@ -97,8 +97,7 @@ const registerHandler = async (client) => {
         await databaseManager.addVoteToPoll(pollId, interaction.user.id, choiceid)
         
         const poll = await databaseManager.getPoll(pollId)
-
-        console.log(poll, pollId)
+        
         const pollOptions = poll.pollOptions
     
         const newVoteResults = [...Array( pollOptions.length )].fill(0)

@@ -37,7 +37,7 @@ const registerHandler = (client) => {
                     .then( roles => {
                         roles.map( role => {
                             const r_name = role.name
-                            if ( includesAny(r_name, ["Grupa: ","- Admin","- Uczen","- Nauczyciel","- Gosc"]) ) 
+                            if ( includesAny(r_name, ["Grupa: ","Admin","Uczen: ","Nauczyciel: ","Gosc: "]) ) 
                                 interaction.guild.roles.delete( role.id, "group reset")
                         })
                     })

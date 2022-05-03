@@ -24,7 +24,7 @@ const registerHandler = async (client) => {
                     interaction.guild.roles.fetch().then( roles => {
                         interaction.guild.members.fetch(futureTeacher.id).then( member => {
                             roles.map( role => {
-                                if ( role.name === groupName + " - Nauczyciel" || role.name === "Nauczyciel" )
+                                if ( role.name === `Nauczyciel: ${groupName}` || role.name === "Nauczyciel" )
                                     member.roles.add( role )
                             })
                         })
