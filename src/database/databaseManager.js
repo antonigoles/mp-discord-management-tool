@@ -2,6 +2,8 @@ const Utils = require('../utils.js')
 const fs = require('fs')
 const mongojs = require('mongojs')
 const { env } = require("../config.js")
+const internal = require('stream')
+const { resolve } = require('path')
 const db = mongojs(
     `mongodb+srv://${env.DB_USER}:${env.DB_PASS}@cluster0.uolsy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
     ["guildsData", "groups"])
@@ -54,7 +56,7 @@ const isGuildSettedUp = async ( guildId ) => {
     })
 }
 
-const _addGroupToDB = async ( guildId, name, channelIds ) => {
+const addGroupToDB = async ( guildId, name, channelIds ) => {
     await db.groups.insert({
         ownerGuildId: guildId,
         name: name,
@@ -76,7 +78,7 @@ const createGroup = async ( guildId, name, channelIds ) => {
     if ( await isGroupInDb( guildId, name ) ) {
         throw new Error("Group already exists in this guild!")
     }
-    await _addGroupToDB( guildId, name, channelIds )
+    await addGroupToDB( guildId, name, channelIds )
 }
 
 
@@ -254,6 +256,52 @@ const updateAndReturnTaskTracker = async ( trackerId, studentId, taskId ) => {
     })
 }
 
+const addPollToDb = async ( pollId, pollOptions ) => {
+    await db.polls.insert({
+        pollId: pollId,
+        pollOptions: pollOptions,
+        votes: []
+    })
+    // vote structure 
+    // {
+    //    userId: string,
+    //    choice: int,
+    // }
+}
+
+const getPoll = ( pollId ) => {
+    return new Promise(( resolve, reject ) => {
+        db.polls.findOne({ pollId: pollId }, (err, doc) => {
+            if (err) {
+                reject( err )
+            }
+            resolve( doc )
+        })
+    })
+}
+
+const removeVoteFromPoll = ( pollId, userId ) => {
+    return new Promise((resolve, reject) => {
+        db.polls.update({ pollId: pollId }, {
+            $pull: { 'votes': { userId: userId } }
+        }, {}, (err, doc) => {
+            if (err) reject(err)
+            resolve(doc)
+        })
+    })
+}
+
+const addVoteToPoll = ( pollId, userId, vote ) => {
+    return new Promise((resolve, reject) => {
+        db.polls.update({ pollId: pollId }, {
+            $push: { 'votes': { userId: userId, choice: vote } }
+        }, {}, (err, doc) => {
+            if (err) reject(err)
+            resolve(doc)
+        })
+    })
+}
+
 const Errors = {
     NO_SUCH_USER_IN_COLLECTION: new Error("User is not part of this collection"),
     ELEMENT_DOES_NOT_EXIST: new Error("Element is not present in the collection"),
@@ -264,5 +312,6 @@ exports.Errors = Errors
 exports.databaseManager = {
     setGuildSetupStatus, isGuildSettedUp, createGroup, deleteGroup, addTeacherToGroup, addStudentToGroup,
     addChannelsToGroup, isGroupInDb, getAllGroupsFromGuild, getGroupByName, removeStudentFromGroup, isStudentInGroup,
-    isTeacherInGroup, removeTeacherFromGroup, addTaskTrackerToDb, updateAndReturnTaskTracker
+    isTeacherInGroup, removeTeacherFromGroup, addTaskTrackerToDb, updateAndReturnTaskTracker,
+    addPollToDb, getPoll, removeVoteFromPoll, addVoteToPoll
 }
