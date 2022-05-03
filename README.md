@@ -9,17 +9,17 @@
 
 # Wyjaśnienie hierarchi rang
 
-**Admin** - ranga nad każdą inną, ma pełną kontrole nad botem i serwerem
+`Admin` - ranga nad każdą inną, ma pełną kontrole nad botem i serwerem
 
-**Nauczyciel: ${nazwa_grupy}** - Ta ranga pozwala na bardziej konretne zarządzanie grupą, dla której dany użytkownik jest nauczycielem
+`Nauczyciel: ${nazwa_grupy}` - Ta ranga pozwala na bardziej konretne zarządzanie grupą, dla której dany użytkownik jest nauczycielem
 
-**Nauczyciel** - ranga dla każdego nauczyciela, która odróżnia go od ucznia ale nie pozwala mu na "konkretniejsze" zarządzanie grupami, w których nie jest nauczycielem
+`Nauczyciel` - ranga dla każdego nauczyciela, która odróżnia go od ucznia ale nie pozwala mu na "konkretniejsze" zarządzanie grupami, w których nie jest nauczycielem
 
-**Uczeń** - ranga uczniów, służy przedewszystkim do zablokowania możliwości
+`Uczeń` - ranga uczniów, służy przedewszystkim do zablokowania możliwości
 przeglądania grup, do których dany uczeń nie 
 należy
 
-**Gość** - domyślna ranga 
+`Gość` - domyślna ranga 
 
 
 # Komendy
@@ -47,8 +47,9 @@ należy
 | **/removegroup** | • Usuwa wszystko to co dodała komenda: `/addgroup` | `nazwa_grupy(role mention)` | `Admin` |
 | **/addteacher** | • Dodaje użytkownika jako nauczyciel <br> • Nadaje mu role `Nauczyciel` oraz role `${nazwa_grupy} - Nauczyciel ` | `nazwa_grupy(role mention)`, `użytkownik(user mention)` | `Admin` |
 | **/removeteacher** | • Usuwa nauczyciela z grupy <br> • Usuwa mu role `${nazwa_grupy} - Nauczyciel` | `nazwa_grupy(role mention)`, `użytkownik(user mention)`  | `Admin` |
-| **/addstudents** | • Dodaje **uczniów** do grupy <br> • Przypisuje każdemu uczniowi role `Uczen: ${nazwa_grupy}`, `Uczen` <br> • Komenda może przyjąć maksymalnie 6 arugmentów typu `użytkownik` (minimalnie 1)   | `nazwa_grupy(role mention)`, <br> `Lista: użytkownik(user mention)` | `Nauczyciel: ${nazwa_grupy}` |
-| **/removestudent** | • Usuwa **uczniów** z grupy <br> • Usuwa każdemu uczniowi role `Uczen: ${nazwa_grupy}` <br> • Komenda może przyjąć maksymalnie 6 arugmentów typu `użytkownik` (minimalnie 1) |  `nazwa_grupy(role mention)`, <br> `Lista: użytkownik(user mention)` | `Nauczyciel: ${nazwa_grupy}` |
+| **/addstudents** | • Dodaje **uczniów** do grupy <br> • Przypisuje każdemu uczniowi role `Uczen: ${nazwa_grupy}`, `Uczen` <br>   | `nazwa_grupy(role mention)`, <br> `Lista: użytkownik(user mention)` | `Nauczyciel: ${nazwa_grupy}` |
+| **/removestudent** | • Usuwa **uczniów** z grupy <br> • Usuwa każdemu uczniowi role `Uczen: ${nazwa_grupy}` <br>  |  `nazwa_grupy(role mention)`, <br> `Lista: użytkownik(user mention)` | `Nauczyciel: ${nazwa_grupy}` |
+| **/grouprename** | • Zmienia nazwe grupy <br> • zmienia nazwe wszystkich roli <br> • (O ile zaznaczymy true w parametrze `rename_channels`) Aktualizuje nazwy kanałów podmieniając wystapienia poprzedniej nazwy na nową |  `nazwa_grupy(role mention)`, <br> `rename_channels(bool)` | `Admin` |
 
 ##### Dodatkowe informacje do komend
 - Rola `Grupa: ${nazwa_grupy}` powstaje przy tworzeniu nowej grupy i służy jako parametr dla innych funkcji `nazwa_grupy(role mention)` np. **/addstudent**. W ten sposób lista grup wyświetla się przy wpisywaniu (bo dla discorda jest po prostu rolą)
