@@ -88,14 +88,15 @@ DB_PASS=<HASŁO DO MONGODB>
 
 ## Przykładowy setup na serwerze dla...
 - 4 grupowej szkoły
+- Każda grupa jest w kategorii "poniedzialek"
 - Na każdą grupe jest 1 nauczyciel
 - W każdej grupie jest 5 uczniów
 ```
 /setup
 
-/addgroup Klasa1
+/addgroup Klasa1 poniedzialek
 ...
-/addgroup Klasa4
+/addgroup Klasa4 poniedzialek
 
 /addteacher @Grupa: Klasa1 @Nauczyciel1
 ...
