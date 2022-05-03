@@ -65,13 +65,13 @@ Gdy np. nauczyciel zrobi tasktracker dla grupy, w której znajduje się taki ucz
 
 ## Uruchamianie
 **Wymagany jest plik .env z taką strukturą**
-```Makefile
+```markdown
 BOT_TOKEN=<TOKEN BOTA DISCORD>
 APP_ID=<ID APLIKACJI DISCORD>
 DEV_SERVER_ID=<DEV ONLY, ID SERWERA DISCORD POD DEVELOPMENT>
 DB_USER=<LOGIN DO MONGODB>
-DB_PASS=<HASŁO DO MONGODB>
-MAX_CMD_ARGUMENT_LIST_LENGTH=<MAKSYMALNA DŁUGOŚĆ LISTY PARAMETRÓW JAKĄ MOŻE MIEĆ KOMENDA (np. ile uczniów maksymalnie można jednorazowo dodać do grupy)>
+DB_PASS=<HASLO DO MONGODB>
+MAX_CMD_ARGUMENT_LIST_LENGTH=<MAKSYMALNA DLUGOSC LISTY PARAMETROW JAKA MOZE MIEC KOMENDA>
 ```
 
 **Bot może działać w trybie `Development` oraz w trybie `Production`** <br>
