@@ -65,7 +65,7 @@ Gdy np. nauczyciel zrobi tasktracker dla grupy, w której znajduje się taki ucz
 
 ## Uruchamianie
 **Wymagany jest plik .env z taką strukturą**
-```
+```Makefile
 BOT_TOKEN=<TOKEN BOTA DISCORD>
 APP_ID=<ID APLIKACJI DISCORD>
 DEV_SERVER_ID=<DEV ONLY, ID SERWERA DISCORD POD DEVELOPMENT>
