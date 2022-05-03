@@ -1,7 +1,9 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 const { databaseManager, Errors } = require('../database/databaseManager.js');
 const Utils = require('../utils.js')
 const { MAX_CMD_ARGUMENT_LIST_LENGTH } = require("../config.js")
+
 
 const COMMAND_NAME  =   "tasktracker";
 const DESCRIPTION   =   "Creates task tracker for students";
@@ -204,7 +206,7 @@ const registerHandler = async (client) => {
 }
 
 
-exports.command = new Utils.ExtendedSlashCommandBuilder()
+exports.command = new SlashCommandBuilder()
                     .setName(COMMAND_NAME)
                     .setDescription(DESCRIPTION)
                     .addRoleOption( option =>
@@ -212,7 +214,76 @@ exports.command = new Utils.ExtendedSlashCommandBuilder()
                             .setDescription("The name of the group (as a role)")
                             .setRequired(true)
                     )
-                    .addMultipleStringOptions( MAX_CMD_ARGUMENT_LIST_LENGTH, "task" )
+                    .addStringOption( option => 
+                        option.setName("task1")
+                            .setDescription("task1")
+                            .setRequired(true)
+                    )
+                    .addStringOption( option => 
+                        option.setName("task2")
+                            .setDescription("task2")
+                            .setRequired(false)
+                    )
+                    .addStringOption( option => 
+                        option.setName("task3")
+                            .setDescription("task3")
+                            .setRequired(false)
+                    )
+
+                    .addStringOption( option => 
+                        option.setName("task4")
+                            .setDescription("task4")
+                            .setRequired(false)
+                    )
+
+                    .addStringOption( option => 
+                        option.setName("task5")
+                            .setDescription("task5")
+                            .setRequired(false)
+                    )
+
+                    .addStringOption( option => 
+                        option.setName("task6")
+                            .setDescription("task6")
+                            .setRequired(false)
+                    )
+
+                    .addStringOption( option => 
+                        option.setName("task7")
+                            .setDescription("task7")
+                            .setRequired(false)
+                    )
+
+                    .addStringOption( option => 
+                        option.setName("task8")
+                            .setDescription("task8")
+                            .setRequired(false)
+                    )
+
+                    .addStringOption( option => 
+                        option.setName("task9")
+                            .setDescription("task9")
+                            .setRequired(false)
+                    )
+
+                    .addStringOption( option => 
+                        option.setName("task10")
+                            .setDescription("task10")
+                            .setRequired(false)
+                    )
+
+                    .addStringOption( option => 
+                        option.setName("task11")
+                            .setDescription("task11")
+                            .setRequired(false)
+                    )
+
+                    .addStringOption( option => 
+                        option.setName("task12")
+                            .setDescription("task12")
+                            .setRequired(false)
+                    )
+
 
 
 exports.registerHandler = registerHandler

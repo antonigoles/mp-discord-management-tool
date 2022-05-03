@@ -1,7 +1,8 @@
 const { MessageEmbed, MessageActionRow, MessageSelectMenu } = require('discord.js');
 const { databaseManager } = require('../database/databaseManager.js');
 const { MAX_CMD_ARGUMENT_LIST_LENGTH } = require("../config.js")
-const { ExtendedSlashCommandBuilder } = require('../utils.js')
+const { SlashCommandBuilder } = require('@discordjs/builders');
+
 
 const COMMAND_NAME  =   "poll";
 const DESCRIPTION   =   "Creates poll";
@@ -122,7 +123,7 @@ const registerHandler = async (client) => {
 }
 
 
-exports.command = new ExtendedSlashCommandBuilder()
+exports.command = new SlashCommandBuilder()
                     .setName(COMMAND_NAME)
                     .setDescription(DESCRIPTION)
                     .addStringOption( option =>
@@ -130,7 +131,56 @@ exports.command = new ExtendedSlashCommandBuilder()
                             .setDescription("text")
                             .setRequired(true)
                     )
-                    .addMultipleStringOptions(15, "option")
+                    .addStringOption( option => 
+                        option.setName("option1")
+                            .setDescription("option1")
+                            .setRequired(true)
+                    )
+                    .addStringOption( option => 
+                        option.setName("option2")
+                            .setDescription("option2")
+                            .setRequired(false)
+                    )
+                    .addStringOption( option => 
+                        option.setName("option3")
+                            .setDescription("option3")
+                            .setRequired(false)
+                    )
+                    .addStringOption( option => 
+                        option.setName("option4")
+                            .setDescription("option4")
+                            .setRequired(false)
+                    )
+                    .addStringOption( option => 
+                        option.setName("option5")
+                            .setDescription("option5")
+                            .setRequired(false)
+                    )
+                    .addStringOption( option => 
+                        option.setName("option6")
+                            .setDescription("option6")
+                            .setRequired(false)
+                    )
+                    .addStringOption( option => 
+                        option.setName("option7")
+                            .setDescription("option7")
+                            .setRequired(false)
+                    )
+                    .addStringOption( option => 
+                        option.setName("option8")
+                            .setDescription("option8")
+                            .setRequired(false)
+                    )
+                    .addStringOption( option => 
+                        option.setName("option9")
+                            .setDescription("option9")
+                            .setRequired(false)
+                    )
+                    .addStringOption( option => 
+                        option.setName("option10")
+                            .setDescription("option10")
+                            .setRequired(false)
+                    )
 
 
 exports.registerHandler = registerHandler

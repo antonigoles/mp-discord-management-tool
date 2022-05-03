@@ -13,7 +13,7 @@ const registerHandler = (client) => {
             const groupName = (await interaction.options.getRole("group_name")).name.slice(7)
 
             if ( !(await interaction.member.permissions.has("ADMINISTRATOR", true))
-                &&!(interaction.member.roles.cache.some(role => role.name === groupName + " - Nauczyciel"))
+                &&!(interaction.member.roles.cache.some(role => role.name === `Nauczyciel: ${groupName}`))
             ) {
                 interaction.reply({content: "Nie jesteś Nauczycielem tej grupy!"})
                 return;

@@ -10,7 +10,7 @@ const db = mongojs(
 
 // TODO: Move everything somewhere else
 
-const _addGuildToDB = async ( guildId ) => {
+const addGuildToDB = async ( guildId ) => {
     await db.guildsData.insert({
         guildId: guildId,
         settedUp: false,
@@ -28,7 +28,7 @@ const isGuildInDB = async ( guildId ) => {
 const setGuildSetupStatus = async ( guildId, status ) => {
     let a  = await isGuildInDB( guildId )
     if ( !await isGuildInDB( guildId ) ) {
-        await _addGuildToDB( guildId )
+        await addGuildToDB( guildId )
     }
     await db.guildsData.findAndModify( {
         query: { guildId: guildId },
@@ -104,6 +104,21 @@ const deleteGroup = async ( guildId, name ) => {
         return;
     }
     await db.groups.remove({ ownerGuildId: guildId, name: name }, { justOne: true })
+}
+
+const renameGroup = ( guildId, name, newName ) => {
+    return new Promise((resolve, reject) => {
+        db.groups.findAndModify({
+            query: { ownerGuildId: guildId, name: name },
+            update: {$set: { name: newName } },
+            new: true
+        }, (err, doc) => {
+            if ( err ) {
+                reject(err);
+            }
+            resolve(doc)
+        })
+    })
 }
 
 const addTeacherToGroup = async ( name, guildId, discordId ) => {
@@ -310,7 +325,7 @@ const Errors = {
 exports.Errors = Errors
 
 exports.databaseManager = {
-    setGuildSetupStatus, isGuildSettedUp, createGroup, deleteGroup, addTeacherToGroup, addStudentToGroup,
+    setGuildSetupStatus, isGuildSettedUp, createGroup, renameGroup, deleteGroup, addTeacherToGroup, addStudentToGroup,
     addChannelsToGroup, isGroupInDb, getAllGroupsFromGuild, getGroupByName, removeStudentFromGroup, isStudentInGroup,
     isTeacherInGroup, removeTeacherFromGroup, addTaskTrackerToDb, updateAndReturnTaskTracker,
     addPollToDb, getPoll, removeVoteFromPoll, addVoteToPoll

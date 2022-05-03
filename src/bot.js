@@ -100,6 +100,7 @@ client.login(env.BOT_TOKEN);
                 Routes.applicationGuildCommands(env.APP_ID, env.DEV_SERVER_ID ),
                 { body: parsed_body },
             );
+            Utils.logDebug( env )
         }
 
         Utils.logDebug('Successfully reloaded application (/) commands.');

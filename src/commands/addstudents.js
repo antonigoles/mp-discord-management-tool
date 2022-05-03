@@ -1,9 +1,9 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const { databaseManager } = require("../database/databaseManager.js")
 const { MAX_CMD_ARGUMENT_LIST_LENGTH } = require("../config.js")
-const { ExtendedSlashCommandBuilder } = require('../utils.js')
 
 const COMMAND_NAME  =   "addstudents";
-const DESCRIPTION   =   "Adds multiple students at once (min 1 - max 6)";
+const DESCRIPTION   =   "Adds multiple students at once";
 
 const registerHandler = async (client) => {
     client.on('interactionCreate', async interaction => {
@@ -61,15 +61,63 @@ const registerHandler = async (client) => {
     });
 }
 
-
-exports.command = new ExtendedSlashCommandBuilder()
-                    .setName(COMMAND_NAME)
-                    .setDescription(DESCRIPTION)
-                    .addRoleOption( option =>
-                        option.setName("group_name")
-                            .setDescription("The name of the group (must be unique)")
-                            .setRequired(true)
-                    )
-                    .addMultipleUserOptions(MAX_CMD_ARGUMENT_LIST_LENGTH, "discord_user")
+exports.command = new SlashCommandBuilder()
+                        .setName(COMMAND_NAME)
+                        .setDescription(DESCRIPTION)
+                        .addRoleOption( option =>
+                            option.setName("group_name")
+                                .setDescription("The name of the group (must be unique)")
+                                .setRequired(true)
+                        )
+                        .addUserOption( option => 
+                            option.setName("discord_user1")
+                                .setDescription("discord_user1")
+                                .setRequired(true)
+                        )
+                        .addUserOption( option => 
+                            option.setName("discord_user2")
+                                .setDescription("discord_user2")
+                                .setRequired(false)
+                        )
+                        .addUserOption( option => 
+                            option.setName("discord_user3")
+                                .setDescription("discord_user3")
+                                .setRequired(false)
+                        )
+                        .addUserOption( option => 
+                            option.setName("discord_user4")
+                                .setDescription("discord_user4")
+                                .setRequired(false)
+                        )
+                        .addUserOption( option => 
+                            option.setName("discord_user5")
+                                .setDescription("discord_user5")
+                                .setRequired(false)
+                        )
+                        .addUserOption( option => 
+                            option.setName("discord_user6")
+                                .setDescription("discord_user6")
+                                .setRequired(false)
+                        )
+                        .addUserOption( option => 
+                            option.setName("discord_user7")
+                                .setDescription("discord_user7")
+                                .setRequired(false)
+                        )
+                        .addUserOption( option => 
+                            option.setName("discord_user8")
+                                .setDescription("discord_user8")
+                                .setRequired(false)
+                        )
+                        .addUserOption( option => 
+                            option.setName("discord_user9")
+                                .setDescription("discord_user9")
+                                .setRequired(false)
+                        )
+                        .addUserOption( option => 
+                            option.setName("discord_user10")
+                                .setDescription("discord_user10")
+                                .setRequired(false)
+                        )
 
 exports.registerHandler = registerHandler
