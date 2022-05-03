@@ -27,17 +27,18 @@ const registerHandler = (client) => {
                 return;
             }
 
-            const categoryChannelName = interaction.options.getString("category_name")
-            let categoryChannel = null;
+            const categoryChannel = interaction.options.getChannel("category_name")
+            let categoryChannelName = categoryChannel.name;
+            let isCategory = false
             await interaction.guild.channels.fetch().then( channels => {
                 channels.map( channel => {
                     if ( channel.type == 'GUILD_CATEGORY' && channel.name == categoryChannelName ) {
-                        categoryChannel = channel;
+                        isCategory = true;
                     }
                 })
             })
 
-            if ( categoryChannel == null ) {
+            if ( !isCategory ) {
                 interaction.reply({content: `😣 Ta kategoria nie istnieje!!`})
                 return;
             }
@@ -116,9 +117,9 @@ exports.command = new SlashCommandBuilder()
                             .setDescription("The name of the group (must be unique)")
                             .setRequired(true)
                     )
-                    .addStringOption( option => 
+                    .addChannelOption( option => 
                         option.setName("category_name")
-                            .setDescription("The category the channel")
+                            .setDescription("The category of the channel")
                             .setRequired(true)
                     );
 

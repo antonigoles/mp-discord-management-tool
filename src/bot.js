@@ -22,6 +22,7 @@ const commands = [
     require("./commands/removeteacher.js"),
     require("./commands/poll.js"),
     require("./commands/tasktracker.js"),
+    require("./commands/grouprename.js"),
 ];
 
 // TODO: Move every command file from format: register => { client.on('interaction' ) }

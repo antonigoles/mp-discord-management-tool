@@ -43,7 +43,7 @@ należy
 ## Dla grup
 | Komenda | Opis | Parametry | Minimalne permisje |
 | --- | --- |---| --- |
-| **/addgroup** | • Każda nazwa jest zamieniana na format zgodny z formatem nazw kanałów tekstowych discord <br> • **Dodaje** grupe do bazy danych <br> • **Dodaje** wszystkie role (dodawane role: `Grupa: ${nazwa_grupy}`, `Uczen: ${nazwa_grupy}`, `Nauczyciel: ${nazwa_grupy}`) <br> • **Dodaje** kanały oraz kategorię, którą mogą widzieć tylko osoby z rangami: <br>`Nauczyciel`, `Uczen: ${nazwa_grupy}`, `Nauczyciel: ${nazwa_grupy}`, `Admin`. <br> | `nazwa_grupy(string)` `kategoria(string)` | `Admin` |
+| **/addgroup** | • Każda nazwa jest zamieniana na format zgodny z formatem nazw kanałów tekstowych discord <br> • **Dodaje** grupe do bazy danych <br> • **Dodaje** wszystkie role (dodawane role: `Grupa: ${nazwa_grupy}`, `Uczen: ${nazwa_grupy}`, `Nauczyciel: ${nazwa_grupy}`) <br> • **Dodaje** kanały oraz kategorię, którą mogą widzieć tylko osoby z rangami: <br>`Nauczyciel`, `Uczen: ${nazwa_grupy}`, `Nauczyciel: ${nazwa_grupy}`, `Admin`. <br> | `nazwa_grupy(string)` `kategoria(channel_mention)` | `Admin` |
 | **/removegroup** | • Usuwa wszystko to co dodała komenda: `/addgroup` | `nazwa_grupy(role mention)` | `Admin` |
 | **/addteacher** | • Dodaje użytkownika jako nauczyciel <br> • Nadaje mu role `Nauczyciel` oraz role `${nazwa_grupy} - Nauczyciel ` | `nazwa_grupy(role mention)`, `użytkownik(user mention)` | `Admin` |
 | **/removeteacher** | • Usuwa nauczyciela z grupy <br> • Usuwa mu role `${nazwa_grupy} - Nauczyciel` | `nazwa_grupy(role mention)`, `użytkownik(user mention)`  | `Admin` |
