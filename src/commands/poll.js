@@ -97,7 +97,7 @@ const registerHandler = async (client) => {
         await databaseManager.addVoteToPoll(pollId, interaction.user.id, choiceid)
         
         const poll = await databaseManager.getPoll(pollId)
-        
+
         const pollOptions = poll.pollOptions
     
         const newVoteResults = [...Array( pollOptions.length )].fill(0)
@@ -122,7 +122,7 @@ const registerHandler = async (client) => {
 }
 
 
-exports.command = new SlashCommandBuilder()
+exports.command = new ExtendedSlashCommandBuilder()
                     .setName(COMMAND_NAME)
                     .setDescription(DESCRIPTION)
                     .addStringOption( option =>
@@ -130,82 +130,7 @@ exports.command = new SlashCommandBuilder()
                             .setDescription("text")
                             .setRequired(true)
                     )
-                    .addStringOption( option =>
-                        option.setName("option1")
-                            .setDescription("option1")
-                            .setRequired(true)
-                    )
-                    .addStringOption( option =>
-                        option.setName("option2")
-                            .setDescription("option2")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("option3")
-                            .setDescription("option3")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("option4")
-                            .setDescription("option4")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("option5")
-                            .setDescription("option5")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("option6")
-                            .setDescription("option6")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("option7")
-                            .setDescription("option7")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("option8")
-                            .setDescription("option8")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("option9")
-                            .setDescription("option9")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("option10")
-                            .setDescription("option10")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("option11")
-                            .setDescription("option11")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("option12")
-                            .setDescription("option12")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("option13")
-                            .setDescription("option13")
-                            .setRequired(false)
-
-                    )
-                    .addStringOption( option =>
-                        option.setName("option14")
-                            .setDescription("option14")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("option15")
-                            .setDescription("option15")
-                            .setRequired(false)
-                    )
+                    .addMultipleStringOptions(15, "option")
 
 
 exports.registerHandler = registerHandler

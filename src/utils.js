@@ -1,3 +1,5 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
+
 const TerminalColors = {
 	Reset : "\x1b[0m",
 	Bright : "\x1b[1m",
@@ -91,3 +93,42 @@ exports.sleep = (ms) => {
 	});
 }
 
+class ExtendedSlashCommandBuilder extends SlashCommandBuilder {
+	constructor() {
+		super()
+	}
+
+	addMultipleStringOptions(count, name) {
+		let builded = this.addStringOption( option => 
+			option.setName(`${name}1`)
+				.setDescription(`${name}1`)
+				.setRequired(true)
+		)
+		for ( let i = 2; i<=count; i++ ) {
+			builded = builded.addStringOption( option => 
+				option.setName(`${name}${i}`)
+					.setDescription(`${name}${i}`)
+					.setRequired(false)
+			)
+		}
+		return builded
+	}
+
+	addMultipleUserOptions(count, name) {
+		let builded = this.addUserOption( option => 
+			option.setName(`${name}1`)
+				.setDescription(`${name}1`)
+				.setRequired(true)
+		)
+		for ( let i = 2; i<=count; i++ ) {
+			builded = builded.addUserOption( option => 
+				option.setName(`${name}${i}`)
+					.setDescription(`${name}${i}`)
+					.setRequired(false)
+			)
+		}
+		return builded
+	}
+}
+
+exports.ExtendedSlashCommandBuilder = ExtendedSlashCommandBuilder

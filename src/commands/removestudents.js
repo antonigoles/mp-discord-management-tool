@@ -75,7 +75,7 @@ const registerHandler = async (client) => {
 }
 
 
-exports.command = new SlashCommandBuilder()
+exports.command = new ExtendedSlashCommandBuilder()
                     .setName(COMMAND_NAME)
                     .setDescription(DESCRIPTION)
                     .addRoleOption( option =>
@@ -83,35 +83,6 @@ exports.command = new SlashCommandBuilder()
                             .setDescription("The name of the group")
                             .setRequired(true)
                     )
-                    .addUserOption( option =>
-                        option.setName("discord_user1")
-                            .setDescription("The @ of the student you want to remove")
-                            .setRequired(true)
-                    )
-                    .addUserOption( option =>
-                        option.setName("discord_user2")
-                            .setDescription("The @ of the student you want to remove")
-                            .setRequired(false)
-                    )
-                    .addUserOption( option =>
-                        option.setName("discord_user3")
-                            .setDescription("The @ of the student you want to remove")
-                            .setRequired(false)
-                    )
-                    .addUserOption( option =>
-                        option.setName("discord_user4")
-                            .setDescription("The @ of the student you want to remove")
-                            .setRequired(false)
-                    )
-                    .addUserOption( option =>
-                        option.setName("discord_user5")
-                            .setDescription("The @ of the student you want to remove")
-                            .setRequired(false)
-                    )
-                    .addUserOption( option =>
-                        option.setName("discord_user6")
-                            .setDescription("The @ of the student you want to remove")
-                            .setRequired(false)
-                    )
+                    .addMultipleUserOptions(10, "discord_user")
 
 exports.registerHandler = registerHandler

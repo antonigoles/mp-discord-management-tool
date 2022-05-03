@@ -166,7 +166,6 @@ const registerHandler = async (client) => {
             groupedStudents[groupedStudents.length-1].push(e)
         })
 
-        // Utils.logDebug(Object.keys(updatedTracker.progress['269518096031547402']))
         const emojis = await interaction.guild.emojis.fetch()
         const emojiMap = {}
         emojis.forEach( (emoji) => {
@@ -205,7 +204,7 @@ const registerHandler = async (client) => {
 }
 
 
-exports.command = new SlashCommandBuilder()
+exports.command = new Utils.ExtendedSlashCommandBuilder()
                     .setName(COMMAND_NAME)
                     .setDescription(DESCRIPTION)
                     .addRoleOption( option =>
@@ -213,82 +212,7 @@ exports.command = new SlashCommandBuilder()
                             .setDescription("The name of the group (as a role)")
                             .setRequired(true)
                     )
-                    .addStringOption( option =>
-                        option.setName("task1")
-                            .setDescription("task1")
-                            .setRequired(true)
-                    )
-                    .addStringOption( option =>
-                        option.setName("task2")
-                            .setDescription("task2")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("task3")
-                            .setDescription("task3")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("task4")
-                            .setDescription("task4")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("task5")
-                            .setDescription("task5")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("task6")
-                            .setDescription("task6")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("task7")
-                            .setDescription("task7")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("task8")
-                            .setDescription("task8")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("task9")
-                            .setDescription("task9")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("task10")
-                            .setDescription("task10")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("task11")
-                            .setDescription("task11")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("task12")
-                            .setDescription("task12")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("task13")
-                            .setDescription("task13")
-                            .setRequired(false)
-
-                    )
-                    .addStringOption( option =>
-                        option.setName("task14")
-                            .setDescription("task14")
-                            .setRequired(false)
-                    )
-                    .addStringOption( option =>
-                        option.setName("task15")
-                            .setDescription("task15")
-                            .setRequired(false)
-                    )
+                    .addMultipleStringOptions( 15, "task" )
 
 
 exports.registerHandler = registerHandler

@@ -61,7 +61,7 @@ const registerHandler = async (client) => {
 }
 
 
-exports.command = new SlashCommandBuilder()
+exports.command = new ExtendedSlashCommandBuilder()
                     .setName(COMMAND_NAME)
                     .setDescription(DESCRIPTION)
                     .addRoleOption( option =>
@@ -69,35 +69,6 @@ exports.command = new SlashCommandBuilder()
                             .setDescription("The name of the group (must be unique)")
                             .setRequired(true)
                     )
-                    .addUserOption( option =>
-                        option.setName("discord_user1")
-                            .setDescription("The @ of the user you want to assign as a student")
-                            .setRequired(true)
-                    )
-                    .addUserOption( option =>
-                        option.setName("discord_user2")
-                            .setDescription("The @ of the user you want to assign as a student")
-                            .setRequired(false)
-                    )
-                    .addUserOption( option =>
-                        option.setName("discord_user3")
-                            .setDescription("The @ of the user you want to assign as a student")
-                            .setRequired(false)
-                    )
-                    .addUserOption( option =>
-                        option.setName("discord_user4")
-                            .setDescription("The @ of the user you want to assign as a student")
-                            .setRequired(false)
-                    )
-                    .addUserOption( option =>
-                        option.setName("discord_user5")
-                            .setDescription("The @ of the user you want to assign as a student")
-                            .setRequired(false)
-                    )
-                    .addUserOption( option =>
-                        option.setName("discord_user6")
-                            .setDescription("The @ of the user you want to assign as a student")
-                            .setRequired(false)
-                    )
+                    .addMultipleUserOptions(15, "discord_user")
 
 exports.registerHandler = registerHandler
