@@ -1,7 +1,7 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 const { databaseManager, Errors } = require('../database/databaseManager.js');
 const Utils = require('../utils.js')
+const { MAX_CMD_ARGUMENT_LIST_LENGTH } = require("../config.js")
 
 const COMMAND_NAME  =   "tasktracker";
 const DESCRIPTION   =   "Creates task tracker for students";
@@ -37,7 +37,7 @@ const registerHandler = async (client) => {
             }
 
             const tasks = []
-            for( let i = 1; i<=15; i++ ) {
+            for( let i = 1; i<=MAX_CMD_ARGUMENT_LIST_LENGTH; i++ ) {
                 if ( interaction.options.getString(`task${i}`) != null ) {
                     tasks.push( interaction.options.getString(`task${i}`) )
                 }
@@ -212,7 +212,7 @@ exports.command = new Utils.ExtendedSlashCommandBuilder()
                             .setDescription("The name of the group (as a role)")
                             .setRequired(true)
                     )
-                    .addMultipleStringOptions( 15, "task" )
+                    .addMultipleStringOptions( MAX_CMD_ARGUMENT_LIST_LENGTH, "task" )
 
 
 exports.registerHandler = registerHandler

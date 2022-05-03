@@ -52,7 +52,6 @@ należy
 
 ##### Dodatkowe informacje do komend
 - Rola `Grupa: ${nazwa_grupy}` powstaje przy tworzeniu nowej grupy i służy jako parametr dla innych funkcji `nazwa_grupy(role mention)` np. **/addstudent**. W ten sposób lista grup wyświetla się przy wpisywaniu (bo dla discorda jest po prostu rolą)
-- Ograniczenie ilości dodanych/usuniętych w jednym momencie uczniów wynika z ograniczenia **API Discorda**. By obejść, wystarczy wpisać komende więcej niż 1 raz
 - Kiedy uczeń dodany do grupy wyjdzie z serwera, będzie on dalej w bazie danych.
 Gdy np. nauczyciel zrobi tasktracker dla grupy, w której znajduje się taki uczeń, imie ucznia wyświetli się jako `UCZEŃ WYSZEDŁ Z SERWERA`. 
 
@@ -72,6 +71,7 @@ APP_ID=<ID APLIKACJI DISCORD>
 DEV_SERVER_ID=<DEV ONLY, ID SERWERA DISCORD POD DEVELOPMENT>
 DB_USER=<LOGIN DO MONGODB>
 DB_PASS=<HASŁO DO MONGODB>
+MAX_CMD_ARGUMENT_LIST_LENGTH=<MAKSYMALNA DŁUGOŚĆ LISTY PARAMETRÓW JAKĄ MOŻE MIEĆ KOMENDA (np. ile uczniów maksymalnie można jednorazowo dodać do grupy)>
 ```
 
 **Bot może działać w trybie `Development` oraz w trybie `Production`** <br>

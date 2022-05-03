@@ -1,7 +1,7 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed, MessageActionRow, MessageSelectMenu, InteractionCollector } = require('discord.js');
+const { MessageEmbed, MessageActionRow, MessageSelectMenu } = require('discord.js');
 const { databaseManager } = require('../database/databaseManager.js');
-const Utils = require('../utils.js')
+const { MAX_CMD_ARGUMENT_LIST_LENGTH } = require("../config.js")
+const { ExtendedSlashCommandBuilder } = require('../utils.js')
 
 const COMMAND_NAME  =   "poll";
 const DESCRIPTION   =   "Creates poll";
@@ -20,7 +20,7 @@ const registerHandler = async (client) => {
             }
 
             const pollOptions = []
-            for( let i = 1; i<=15; i++ ) {
+            for( let i = 1; i<=MAX_CMD_ARGUMENT_LIST_LENGTH; i++ ) {
                 if ( interaction.options.getString(`option${i}`) != null ) {
                     pollOptions.push( interaction.options.getString(`option${i}`) )
                 }

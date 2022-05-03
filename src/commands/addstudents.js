@@ -1,5 +1,6 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
 const { databaseManager } = require("../database/databaseManager.js")
+const { MAX_CMD_ARGUMENT_LIST_LENGTH } = require("../config.js")
+const { ExtendedSlashCommandBuilder } = require('../utils.js')
 
 const COMMAND_NAME  =   "addstudents";
 const DESCRIPTION   =   "Adds multiple students at once (min 1 - max 6)";
@@ -24,7 +25,7 @@ const registerHandler = async (client) => {
             }
 
             const futureStudents = []
-            for( let i = 1; i<7; i++ ) {
+            for( let i = 1; i<=MAX_CMD_ARGUMENT_LIST_LENGTH; i++ ) {
                 if ( interaction.options.getUser(`discord_user${i}`) != null ) {
                     futureStudents.push( interaction.options.getUser(`discord_user${i}`) )
                 }
@@ -69,6 +70,6 @@ exports.command = new ExtendedSlashCommandBuilder()
                             .setDescription("The name of the group (must be unique)")
                             .setRequired(true)
                     )
-                    .addMultipleUserOptions(15, "discord_user")
+                    .addMultipleUserOptions(MAX_CMD_ARGUMENT_LIST_LENGTH, "discord_user")
 
 exports.registerHandler = registerHandler
