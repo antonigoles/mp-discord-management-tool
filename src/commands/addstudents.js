@@ -1,6 +1,6 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const { ExtendedSlashCommandBuilder } = require("../utils.js")
 const { databaseManager } = require("../database/databaseManager.js")
-const { MAX_CMD_ARGUMENT_LIST_LENGTH } = require("../config.js")
+const { env } = require("../config.js")
 
 const COMMAND_NAME  =   "addstudents";
 const DESCRIPTION   =   "Adds multiple students at once";
@@ -24,8 +24,8 @@ const registerHandler = async (client) => {
                 return;
             }
 
-            const futureStudents = []
-            for( let i = 1; i<=MAX_CMD_ARGUMENT_LIST_LENGTH; i++ ) {
+            const futureStudents = [] 
+            for( let i = 1; i<=env.MAX_CMD_ARGUMENT_LIST_LENGTH; i++ ) {
                 if ( interaction.options.getUser(`discord_user${i}`) != null ) {
                     futureStudents.push( interaction.options.getUser(`discord_user${i}`) )
                 }
@@ -37,9 +37,6 @@ const registerHandler = async (client) => {
 
             try {
                 futureStudents.map(async (futureStudent) => {
-                    const groupStudentRole = await interaction.guild.roles.cache
-                        .find(role => role.name === `Uczen: ${groupName}`)
-
                     await databaseManager.addStudentToGroup(groupName, interaction.guild.id, futureStudent.id).then(() => {
                         interaction.guild.roles.fetch().then(roles => {
                             interaction.guild.members.fetch(futureStudent.id).then(member => {
@@ -61,7 +58,7 @@ const registerHandler = async (client) => {
     });
 }
 
-exports.command = new SlashCommandBuilder()
+exports.command = new ExtendedSlashCommandBuilder()
                         .setName(COMMAND_NAME)
                         .setDescription(DESCRIPTION)
                         .addRoleOption( option =>

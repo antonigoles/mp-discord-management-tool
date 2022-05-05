@@ -1,5 +1,5 @@
 const { databaseManager } = require("../database/databaseManager.js")
-const { MAX_CMD_ARGUMENT_LIST_LENGTH } = require("../config.js")
+const { env } = require("../config.js")
 const Utils = require("../utils.js")
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
@@ -26,7 +26,7 @@ const registerHandler = async (client) => {
             }
 
             const futureStudents = []
-            for( let i = 1; i<=MAX_CMD_ARGUMENT_LIST_LENGTH; i++ ) {
+            for( let i = 1; i<=env.MAX_CMD_ARGUMENT_LIST_LENGTH; i++ ) {
                 if ( interaction.options.getUser(`discord_user${i}`) != null ) {
                     futureStudents.push( interaction.options.getUser(`discord_user${i}`) )
                 }

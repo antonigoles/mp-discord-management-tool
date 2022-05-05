@@ -1,5 +1,3 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-
 const TerminalColors = {
 	Reset : "\x1b[0m",
 	Bright : "\x1b[1m",
@@ -92,4 +90,3 @@ exports.sleep = (ms) => {
 		setTimeout(resolve, ms);
 	});
 }
-

@@ -1,6 +1,6 @@
 const { MessageEmbed, MessageActionRow, MessageSelectMenu } = require('discord.js');
 const { databaseManager } = require('../database/databaseManager.js');
-const { MAX_CMD_ARGUMENT_LIST_LENGTH } = require("../config.js")
+const { env } = require("../config.js")
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 
@@ -21,7 +21,7 @@ const registerHandler = async (client) => {
             }
 
             const pollOptions = []
-            for( let i = 1; i<=MAX_CMD_ARGUMENT_LIST_LENGTH; i++ ) {
+            for( let i = 1; i<=env.MAX_CMD_ARGUMENT_LIST_LENGTH; i++ ) {
                 if ( interaction.options.getString(`option${i}`) != null ) {
                     pollOptions.push( interaction.options.getString(`option${i}`) )
                 }

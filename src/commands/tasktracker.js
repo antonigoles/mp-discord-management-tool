@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 const { databaseManager, Errors } = require('../database/databaseManager.js');
 const Utils = require('../utils.js')
-const { MAX_CMD_ARGUMENT_LIST_LENGTH } = require("../config.js")
+const { env } = require("../config.js")
 
 
 const COMMAND_NAME  =   "tasktracker";
@@ -39,7 +39,7 @@ const registerHandler = async (client) => {
             }
 
             const tasks = []
-            for( let i = 1; i<=MAX_CMD_ARGUMENT_LIST_LENGTH; i++ ) {
+            for( let i = 1; i<=env.MAX_CMD_ARGUMENT_LIST_LENGTH; i++ ) {
                 if ( interaction.options.getString(`task${i}`) != null ) {
                     tasks.push( interaction.options.getString(`task${i}`) )
                 }
