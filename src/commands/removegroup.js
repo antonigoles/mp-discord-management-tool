@@ -35,11 +35,12 @@ const registerHandler = (client) => {
                 })
 
             const group = await databaseManager.getGroupByName( interaction.guild.id, groupName )
-            await group.channels.map( channelId => {
-                interaction.guild.channels.fetch(channelId).then( channel => {
-                    channel.delete()
+            interaction.guild.channels.fetch()
+                .then( channels => {
+                    channels.forEach(channel => {
+                        if ( includesAny(channel.id, group.channels ) ) channel.delete()
+                    });  
                 })
-            })
             await databaseManager.deleteGroup( interaction.guild.id, groupName )
         }
     });

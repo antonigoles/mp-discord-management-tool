@@ -17,8 +17,6 @@ const registerHandler = (client) => {
 
             const groupName = (await interaction.options.getRole("group_mention")).name.slice(7)
             const newGroupName = Utils.normalizeGroupName(await interaction.options.getString("new_name"))
-            const renameChannels = await interaction.options.getBoolean("rename_channels")
-
 
             if ( !(await databaseManager.isGroupInDb( interaction.guild.id, groupName)) ) {
                 interaction.reply({content: "😨 Taka grupa nie istnieje"})
@@ -52,18 +50,21 @@ const registerHandler = (client) => {
                                 `Nauczyciel: ${groupName}`,
                             ])
                             )
-                                role.setName(r_name.replaceAll(groupName,newGroupName))
+                                role.setName(r_name.replaceAll(groupName, newGroupName))
                         })
                     })
                 
                 
                 // 3. rename channels (only voice general and text general)
-                modifiedGroup.channels.forEach(channelId => {
-                    interaction.guild.channels.fetch(channelId)
-                        .then( channel => {
-                            channel.setName(channel.name.replaceAll( groupName, newGroupName))
+                // and only if the channels exist
+                interaction.guild.channels.fetch()
+                        .then( channels => {
+                            channels.forEach( channel => {
+                                if ( Utils.includesAny(channel.id, [modifiedGroup.voiceGeneralId, modifiedGroup.textGeneralId]) ) {
+                                    channel.setName(channel.name.replaceAll( groupName, newGroupName ))
+                                }
+                            })
                         })
-                });
 
 
                 interaction.reply({content: `✅ Zmieniono nazwe grupy ${ "`" + groupName + "`" } na ${ "`" + newGroupName + "`" }`});
