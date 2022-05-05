@@ -1,4 +1,4 @@
-const { ExtendedSlashCommandBuilder } = require("../utils.js")
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const { databaseManager } = require("../database/databaseManager.js")
 const { env } = require("../config.js")
 
@@ -58,7 +58,7 @@ const registerHandler = async (client) => {
     });
 }
 
-exports.command = new ExtendedSlashCommandBuilder()
+exports.command = new SlashCommandBuilder()
                         .setName(COMMAND_NAME)
                         .setDescription(DESCRIPTION)
                         .addRoleOption( option =>

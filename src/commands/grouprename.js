@@ -16,7 +16,7 @@ const registerHandler = (client) => {
             }
 
             const groupName = (await interaction.options.getRole("group_mention")).name.slice(7)
-            const newGroupName = await interaction.options.getString("new_name")
+            const newGroupName = Utils.normalizeGroupName(await interaction.options.getString("new_name"))
             const renameChannels = await interaction.options.getBoolean("rename_channels")
 
 
@@ -31,43 +31,47 @@ const registerHandler = (client) => {
             }
 
             
+            try {
+                // 1. change name in database
+                const modifiedGroup = await databaseManager.renameGroup( interaction.guild.id, groupName, newGroupName )
 
-            // 1. change name in database
-            const modifiedGroup = await databaseManager.renameGroup( interaction.guild.id, groupName, newGroupName )
-            console.log(modifiedGroup)
+                // 2. update roles 
+                /**
+                 * 2a) update group role
+                 * 2b) update teacher role
+                 * 2c) update student role 
+                **/ 
 
-            // 2. update roles 
-            
-            // 2a) update group role
-            // 2b) update teacher role
-            // 2c) update student role 
-
-            await interaction.guild.roles.fetch()
-                .then( roles => {
-                    roles.map( role => {
-                        const r_name = role.name
-                        if ( includesAny(r_name, [
-                            `Grupa: ${groupName}`,
-                            `Uczen: ${groupName}`,
-                            `Nauczyciel: ${groupName}`,
-                        ])
-                        )
-                            interaction.guild.roles.edit({ name: `${r_name.slice(0,-groupName.length)}${newGroupName}` })
+                await interaction.guild.roles.fetch()
+                    .then( roles => {
+                        roles.map( role => {
+                            const r_name = role.name
+                            if ( Utils.includesAny(r_name, [
+                                `Grupa: ${groupName}`,
+                                `Uczen: ${groupName}`,
+                                `Nauczyciel: ${groupName}`,
+                            ])
+                            )
+                                role.setName(r_name.replaceAll(groupName,newGroupName))
+                        })
                     })
-                })
-            
-            
-            // 3. rename channels 
+                
+                
+                // 3. rename channels (only voice general and text general)
+                modifiedGroup.channels.forEach(channelId => {
+                    interaction.guild.channels.fetch(channelId)
+                        .then( channel => {
+                            channel.setName(channel.name.replaceAll( groupName, newGroupName))
+                        })
+                });
 
 
+                interaction.reply({content: `✅ Zmieniono nazwe grupy ${ "`" + groupName + "`" } na ${ "`" + newGroupName + "`" }`});
 
-            if ( renameChannels ) {
-
+            } catch (err) {
+                interaction.reply({content: `❌ Wystąpił błąd po stronie serwera!`});
+                Utils.logDebug(err)
             }
-            
-
-            interaction.reply({content: `✅ Utworzono nową grupę o nazwie: ${ "`" + groupName + "`" }`});
-            
         }
     });
 }
@@ -86,10 +90,5 @@ exports.command = new SlashCommandBuilder()
                             .setDescription("New group name")
                             .setRequired(true)
                     )
-                    .addBooleanOption( option => 
-                        option.setName("rename_channels")
-                            .setDescription("Rename group channels")
-                            .setRequired(true)
-                    );
 
 exports.registerHandler = registerHandler

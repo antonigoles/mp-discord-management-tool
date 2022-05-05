@@ -26,7 +26,6 @@ const isGuildInDB = async ( guildId ) => {
 }
 
 const setGuildSetupStatus = async ( guildId, status ) => {
-    let a  = await isGuildInDB( guildId )
     if ( !await isGuildInDB( guildId ) ) {
         await addGuildToDB( guildId )
     }
@@ -42,7 +41,6 @@ const setGuildSetupStatus = async ( guildId, status ) => {
 }   
 
 const isGuildSettedUp = async ( guildId ) => {
-    let check=false; 
     if ( !(await isGuildInDB( guildId )) ) {
         return false;
     }
@@ -56,10 +54,13 @@ const isGuildSettedUp = async ( guildId ) => {
     })
 }
 
-const addGroupToDB = async ( guildId, name, channelIds ) => {
+const addGroupToDB = async ( guildId, name, voiceGeneralId, textGeneralId, categoryId, channelIds ) => {
     await db.groups.insert({
         ownerGuildId: guildId,
         name: name,
+        voiceGeneralId: voiceGeneralId, 
+        textGeneralId: textGeneralId,
+        categoryId: categoryId,
         teachers: [],
         students: [],
         channels: [ ...channelIds ],
@@ -74,11 +75,11 @@ const isGroupInDb = async ( guildId, name ) => {
     })
 }
 
-const createGroup = async ( guildId, name, channelIds ) => {
+const createGroup = async ( guildId, name, voiceGeneralId, textGeneralId, categoryId, channelIds ) => {
     if ( await isGroupInDb( guildId, name ) ) {
         throw new Error("Group already exists in this guild!")
     }
-    await addGroupToDB( guildId, name, channelIds )
+    await addGroupToDB( guildId, name, voiceGeneralId, textGeneralId, categoryId, channelIds )
 }
 
 

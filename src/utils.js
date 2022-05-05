@@ -70,7 +70,7 @@ exports.removeItemOnce = (arr, value) => {
 }
 
 exports.normalizeGroupName = ( groupName ) => {
-  	return groupName.toLocaleLowerCase().split(" ").join("-")
+  	return groupName.toLocaleLowerCase().split(" ").replace(/[^a-zA-Z ]/g, "").join("-")
 }
 
 exports.setLengthString = ( str, limit ) => {

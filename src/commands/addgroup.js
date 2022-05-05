@@ -101,6 +101,8 @@ const registerHandler = (client) => {
                 await databaseManager.createGroup(
                     interaction.guild.id,
                     groupName,
+                    voiceChannel.id,
+                    textChannel.id,
                     [ voiceChannel.id, textChannel.id ]
                 )
             })();
