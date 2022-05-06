@@ -3,14 +3,13 @@ const { env } = require("./config.js")
 const { Routes } = require('discord-api-types/v9');
 const Utils = require('./utils.js')
 const { Client, Intents } = require('discord.js');
-const { databaseManager } = require("./database/databaseManager");
 const client = new Client({ intents: [Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS] });
 
 // Register event listeners
 
 const eventListeners = [
-    require("./eventListeners/guildMemberAddHandler.js"),
+    require("./eventListeners/guildMemberAdd.js"),
 ];
 
 eventListeners.forEach(e => e.listen(client));
