@@ -30,6 +30,7 @@ const registerHandler = async (client) => {
             interaction.guild.roles.create({
                 name: `Nauczyciel`,
                 color: 'YELLOW',
+                permissions: "MODERATE_MEMBERS",
                 hoist: true,
             })
 
