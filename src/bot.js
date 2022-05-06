@@ -7,11 +7,23 @@ const { databaseManager } = require("./database/databaseManager");
 const client = new Client({ intents: [Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS] });
 
+// Register event listeners
 
+([
+    require("./eventListeners/guildMemberAddHandler.js"),
 
+]).forEach(e => e.listen(client));
+
+// register comamnds handlers
 
 // TODO: Refactor this
-const commands = [ 
+
+// TODO: Move every command file from format: register => { client.on('interaction' ) }
+// to client.on('interaction', () => register() )
+// (safer for memory)
+client.setMaxListeners(30)
+
+([ 
     require("./commands/addgroup.js"),
     require("./commands/setup.js"),
     require("./commands/reset.js"),
@@ -23,18 +35,8 @@ const commands = [
     require("./commands/poll.js"),
     require("./commands/tasktracker.js"),
     require("./commands/grouprename.js"),
-];
 
-// TODO: Move every command file from format: register => { client.on('interaction' ) }
-// to client.on('interaction', () => register() )
-// (safer for memory)
-client.setMaxListeners(30)
-
-// register comamnds handlers
-
-commands.map( (cmd) => {
-    cmd.registerHandler(client)
-})
+]).forEach(cmd=>registerHandler(client))
 
 
 client.on('ready', () => {
@@ -44,40 +46,6 @@ client.on('ready', () => {
 client.on('rateLimit', (info) => {
     Utils.logDebug("rate limit: \n" + JSON.stringify(info))
 })
-
-client.on("guildMemberAdd", async (member) => {
-    Utils.logDebug("New user joined")
-    if ( await databaseManager.isGuildSettedUp( member.guild.id ) ) {
-        Utils.logDebug("Asigning Guest role")
-        await member.guild.roles.fetch().then( roles => {
-            roles.map( role => {
-                if ( role.name === "Gosc" ) member.roles.add(role);
-            })
-        })
-    }
-});
-
-
-// perform asynchronous queue loop
-// created specifically to be able to handle 
-// big bulk updates without constantly getting timed out
-
-// singular operations have priority over bulk updates
-
-// const queue = require('./queue.js');
-// const actionQueue = new queue.ActionQueue();
-// setInterval( () => {
-//     while ( !actionQueue.empty() ) {
-//         sleep( actionQueue.getTimeout()+1 ).then( () => {
-//             console.log( `${actionQueue.size()} in queue... ` )
-//             actionQueue.setTimeout(0)
-//             actionQueue.performNextAction()
-//         });
-//     }
-// }, 0)
-
-
-// Not Yet Implemented, does not seem to work. Should look into this in the future
 
 client.login(env.BOT_TOKEN);
 
