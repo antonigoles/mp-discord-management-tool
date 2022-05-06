@@ -9,10 +9,11 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS,
 
 // Register event listeners
 
-([
+const eventListeners = [
     require("./eventListeners/guildMemberAddHandler.js"),
+];
 
-]).forEach(e => e.listen(client));
+eventListeners.forEach(e => e.listen(client));
 
 // register comamnds handlers
 
@@ -23,7 +24,7 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS,
 // (safer for memory)
 client.setMaxListeners(30)
 
-([ 
+const commands = [ 
     require("./commands/addgroup.js"),
     require("./commands/setup.js"),
     require("./commands/reset.js"),
@@ -36,7 +37,9 @@ client.setMaxListeners(30)
     require("./commands/tasktracker.js"),
     require("./commands/grouprename.js"),
 
-]).forEach(cmd=>registerHandler(client))
+];
+
+commands.forEach(cmd=>cmd.registerHandler(client))
 
 
 client.on('ready', () => {
