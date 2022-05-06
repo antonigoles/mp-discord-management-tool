@@ -122,7 +122,7 @@ exports.command = new SlashCommandBuilder()
                     .addChannelOption( option => 
                         option.setName("category_name")
                             .setDescription("The category of the channel")
-                            .setRequired(false)
+                            .setRequired(true)
                     );
 
 exports.registerHandler = registerHandler

@@ -49,7 +49,8 @@ należy
 | **/removeteacher** | • Usuwa nauczyciela z grupy <br> • Usuwa mu role `${nazwa_grupy} - Nauczyciel` | `nazwa_grupy(role mention)`, `użytkownik(user mention)`  | `Admin` |
 | **/addstudents** | • Dodaje **uczniów** do grupy <br> • Przypisuje każdemu uczniowi role `Uczen: ${nazwa_grupy}`, `Uczen` <br>   | `nazwa_grupy(role mention)`, <br> `Lista: użytkownik(user mention)` | `Nauczyciel: ${nazwa_grupy}` |
 | **/removestudent** | • Usuwa **uczniów** z grupy <br> • Usuwa każdemu uczniowi role `Uczen: ${nazwa_grupy}` <br>  |  `nazwa_grupy(role mention)`, <br> `Lista: użytkownik(user mention)` | `Nauczyciel: ${nazwa_grupy}` |
-| **/grouprename** | • Zmienia nazwe grupy <br> • zmienia nazwe wszystkich roli <br> • (O ile zaznaczymy true w parametrze `rename_channels`) <br> • Aktualizuje nazwy kanałów generalnych o nową nazwe |  `nazwa_grupy(role mention)`, <br> | `Admin` |
+| **/grouprename** | • Zmienia nazwe grupy <br> • zmienia nazwe wszystkich roli <br> • (O ile zaznaczymy true w parametrze `rename_channels`) <br> • Aktualizuje nazwy kanałów generalnych o nową nazwe |  `nazwa_grupy(role mention)` <br> | `Admin` |
+| **/fixgroup** | **Komenda na wyjątki, których bot nie obsłuży (np. przez to że jest offline)** <br> • Usuwa z grupy osoby, których nie ma na serwerze <br> • Usuwa z grupy kanały, które już nie istnieją <br> • Jeżeli wykryje że kanały generalne zostały usunięte pyta się czy je dodać i każe wybrać kategorie w jakiej je utworzy  |  `nazwa_grupy(role mention)` <br> | `Nauczyciel` |
 
 ##### Dodatkowe informacje do komend
 - Rola `Grupa: ${nazwa_grupy}` powstaje przy tworzeniu nowej grupy i służy jako parametr dla innych funkcji `nazwa_grupy(role mention)` np. **/addstudent**. W ten sposób lista grup wyświetla się przy wpisywaniu (bo dla discorda jest po prostu rolą)
@@ -59,8 +60,12 @@ Gdy np. nauczyciel zrobi tasktracker dla grupy, w której znajduje się taki ucz
 
 ## Event Listenery
 
-**`guildMemberAdd`**
-- kiedy użytkownik dołączy do serwera, otrzyma role `Gosc` (do działania wymagane jest zsetupowanie)
+**`guildMemberAdd`** <br>
+(do działania wymagane jest użycie komendy /setup)
+- kiedy użytkownik dołączy do serwera, otrzyma role `Gosc` 
+- jeżeli użytkownik, który dołączył jest w bazie danych jako
+uczeń lub nauczyciel, automatycznie otrzyma odpowiednie role
+
 
 
 
@@ -76,8 +81,8 @@ MAX_CMD_ARGUMENT_LIST_LENGTH=<MAKSYMALNA DLUGOSC LISTY PARAMETROW JAKA MOZE MIEC
 ```
 
 **Bot może działać w trybie `Development` oraz w trybie `Production`** <br>
-- W trybie **Development** rejestruje komendy na lokalnym serwerze discord *(ustawionym w pliku .env)*, zgodnie z zaleceniami Discord API
-- W trybie **Production** rejestruje komendy globalnie, zgodnie z zaleceniami Discord API
+- W trybie **Development** rejestruje komendy na lokalnym serwerze discord *(ustawionym w pliku .env)*, zgodnie z zaleceniami Discord'a
+- W trybie **Production** rejestruje komendy globalnie, zgodnie z zaleceniami Discord'a (może to robić jedynie raz na godzine)
 
 
 **Uruchamianie w trybie Production**: <br>
