@@ -140,7 +140,6 @@ const registerHandler = async (client) => {
                 trackerId, interaction.user.id, taskId-1 
             )
         } catch(err) {
-            Utils.logDebug( err )
             if ( err == Errors.NO_SUCH_USER_IN_COLLECTION ) {
                 interaction.reply({ 
                     content: `Wygląda na to że nie należysz do tej grupy 😧`,
