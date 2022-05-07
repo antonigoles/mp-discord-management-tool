@@ -35,11 +35,10 @@ const commands = [
     require("./commands/poll.js"),
     require("./commands/tasktracker.js"),
     require("./commands/grouprename.js"),
-
+    require("./commands/removekickedmembers.js"),
 ];
 
 commands.forEach(cmd=>cmd.registerHandler(client))
-
 
 client.on('ready', () => {
     Utils.logDebug(`Logged in as ${client.user.tag}!`);
