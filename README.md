@@ -51,6 +51,9 @@ należy
 | **/removestudent** | • Usuwa **uczniów** z grupy <br> • Usuwa każdemu uczniowi role `Uczen: ${nazwa_grupy}` <br>  |  `nazwa_grupy(role mention)`, <br> `Lista: użytkownik(user mention)` | `Nauczyciel: ${nazwa_grupy}` |
 | **/grouprename** | • Zmienia nazwe grupy <br> • zmienia nazwe wszystkich roli <br> • (O ile zaznaczymy true w parametrze `rename_channels`) <br> • Aktualizuje nazwy kanałów generalnych o nową nazwe |  `nazwa_grupy(role mention)` <br> | `Admin` |
 | **/removekickedmembers** | <br> • Usuwa z grupy osoby, których nie ma na serwerze <br> |  `nazwa_grupy(role mention)` <br> | `Admin` |
+| **/addchannel** | <br> • Usuwa z grupy osoby, których nie ma na serwerze <br> |  `nazwa_grupy(role mention)`, `nazwa_kanalu(string)`, `kategoria(channel_mention)` <br> | `Nauczyciel: ${nazwa_grupy}` |
+
+
 
 ##### Dodatkowe informacje do komend
 - Rola `Grupa: ${nazwa_grupy}` powstaje przy tworzeniu nowej grupy i służy jako parametr dla innych funkcji `nazwa_grupy(role mention)` np. **/addstudent**. W ten sposób lista grup wyświetla się przy wpisywaniu (bo dla discorda jest po prostu rolą)
