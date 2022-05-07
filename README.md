@@ -58,7 +58,7 @@ należy
 ##### Dodatkowe informacje do komend
 - Rola `Grupa: ${nazwa_grupy}` powstaje przy tworzeniu nowej grupy i służy jako parametr dla innych funkcji `nazwa_grupy(role mention)` np. **/addstudent**. W ten sposób lista grup wyświetla się przy wpisywaniu (bo dla discorda jest po prostu rolą)
 - Kiedy uczeń dodany do grupy wyjdzie z serwera, będzie on dalej w bazie danych.
-Gdy np. nauczyciel zrobi tasktracker dla grupy, w której znajduje się taki uczeń, imie ucznia wyświetli się jako `UCZEŃ WYSZEDŁ Z SERWERA`. Aby pozbyć się takiego ucznia, użyj komendy `/removekickedmembers`
+Gdy np. nauczyciel zrobi tasktracker dla grupy, w której znajduje się taki uczeń, imie ucznia wyświetli się jako `UCZEŃ WYSZEDŁ Z SERWERA`. Aby pozbyć się takiego ucznia, użyj komendy **/removekickedmembers**
 
 
 ## Event Listenery
