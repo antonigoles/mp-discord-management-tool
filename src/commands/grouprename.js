@@ -17,6 +17,7 @@ const registerHandler = (client) => {
 
             const groupName = (await interaction.options.getRole("group_mention")).name.slice(7)
             const newGroupName = Utils.normalizeGroupName(await interaction.options.getString("new_name"))
+            const renameChannels = (await interaction.options.getBoolean("rename_channels"))
 
             if ( !(await databaseManager.isGroupInDb( interaction.guild.id, groupName)) ) {
                 interaction.reply({content: "😨 Taka grupa nie istnieje"})
@@ -57,14 +58,17 @@ const registerHandler = (client) => {
                 
                 // 3. rename channels (only voice general and text general)
                 // and only if the channels exist
-                interaction.guild.channels.fetch()
+                if ( renameChannels ) {
+                    interaction.guild.channels.fetch()
                         .then( channels => {
                             channels.forEach( channel => {
-                                if ( Utils.includesAny(channel.id, [modifiedGroup.voiceGeneralId, modifiedGroup.textGeneralId]) ) {
+                                if ( Utils.includesAny(channel.id, modifiedGroup.channels ) ) {
                                     channel.setName(channel.name.replaceAll( groupName, newGroupName ))
                                 }
                             })
                         })
+                }
+                
 
 
                 interaction.reply({content: `✅ Zmieniono nazwe grupy ${ "`" + groupName + "`" } na ${ "`" + newGroupName + "`" }`});
@@ -89,6 +93,11 @@ exports.command = new SlashCommandBuilder()
                     .addStringOption( option => 
                         option.setName("new_name")
                             .setDescription("New group name")
+                            .setRequired(true)
+                    )
+                    .addBooleanOption( option => 
+                        option.setName("rename_channels")
+                            .setDescription("Find and replace all occurances of the old group name in channel names")
                             .setRequired(true)
                     )
 

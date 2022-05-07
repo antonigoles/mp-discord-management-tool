@@ -49,22 +49,22 @@ należy
 | **/removeteacher** | • Usuwa nauczyciela z grupy <br> • Usuwa mu role `${nazwa_grupy} - Nauczyciel` | `nazwa_grupy(role mention)`, `użytkownik(user mention)`  | `Admin` |
 | **/addstudents** | • Dodaje **uczniów** do grupy <br> • Przypisuje każdemu uczniowi role `Uczen: ${nazwa_grupy}`, `Uczen` <br>   | `nazwa_grupy(role mention)`, <br> `Lista: użytkownik(user mention)` | `Nauczyciel: ${nazwa_grupy}` |
 | **/removestudent** | • Usuwa **uczniów** z grupy <br> • Usuwa każdemu uczniowi role `Uczen: ${nazwa_grupy}` <br>  |  `nazwa_grupy(role mention)`, <br> `Lista: użytkownik(user mention)` | `Nauczyciel: ${nazwa_grupy}` |
-| **/grouprename** | • Zmienia nazwe grupy <br> • zmienia nazwe wszystkich roli <br> • (O ile zaznaczymy true w parametrze `rename_channels`) <br> • Aktualizuje nazwy kanałów generalnych o nową nazwe |  `nazwa_grupy(role mention)` <br> | `Admin` |
-| **/removekickedmembers** | <br> • Usuwa z grupy osoby, których nie ma na serwerze <br> |  `nazwa_grupy(role mention)` <br> | `Admin` |
-| **/addchannel** | <br> • Usuwa z grupy osoby, których nie ma na serwerze <br> |  `nazwa_grupy(role mention)`, `nazwa_kanalu(string)`, `kategoria(channel_mention)` <br> | `Nauczyciel: ${nazwa_grupy}` |
+| **/grouprename** | • Zmienia nazwe grupy <br> • zmienia nazwe wszystkich roli <br> • Podmienia wystąpienia nazwy starej nazwy grupy na nową w nazwach kanałów (O ile zaznaczymy True w parametrze `rename_channels`) <br> • Aktualizuje nazwy kanałów generalnych o nową nazwe |  `nazwa_grupy(role mention)`, `new_name(String)`, `rename_channels(boolean)` <br> | `Admin` |
+| **/removekickedmembers** | • Usuwa z grupy osoby, których nie ma na serwerze <br> |  `nazwa_grupy(role mention)` <br> | `Admin` |
+| **/addchannel** | • Dodaje kanał do grupy <br> • Dodaje przed wybraną nazwe prefix w formacie `${nazwa_grupy}-` (Jeżeli add_groupname_prefix jest ustawione na True) <br>  |  `channel_type(VOICE/TEXT)`, `nazwa_grupy(role mention)`, `nazwa_kanalu(string)`, `kategoria(channel_mention)`, `add_groupname_prefix(boolean)` <br> | `Nauczyciel: ${nazwa_grupy}` |
 
 
 
 ##### Dodatkowe informacje do komend
 - Rola `Grupa: ${nazwa_grupy}` powstaje przy tworzeniu nowej grupy i służy jako parametr dla innych funkcji `nazwa_grupy(role mention)` np. **/addstudent**. W ten sposób lista grup wyświetla się przy wpisywaniu (bo dla discorda jest po prostu rolą)
 - Kiedy uczeń dodany do grupy wyjdzie z serwera, będzie on dalej w bazie danych.
-Gdy np. nauczyciel zrobi tasktracker dla grupy, w której znajduje się taki uczeń, imie ucznia wyświetli się jako `UCZEŃ WYSZEDŁ Z SERWERA`. 
+Gdy np. nauczyciel zrobi tasktracker dla grupy, w której znajduje się taki uczeń, imie ucznia wyświetli się jako `UCZEŃ WYSZEDŁ Z SERWERA`. Aby pozbyć się takiego ucznia, użyj komendy `/removekickedmembers`
 
 
 ## Event Listenery
 
 **`guildMemberAdd`** <br>
-(do działania wymagane jest użycie komendy /setup)
+(do działania wymagane jest użycie komendy/setup)
 - kiedy użytkownik dołączy do serwera, otrzyma role `Gosc` 
 - jeżeli użytkownik, który dołączył jest w bazie danych jako
 uczeń lub nauczyciel, automatycznie otrzyma odpowiednie role

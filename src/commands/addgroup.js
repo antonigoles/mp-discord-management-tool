@@ -85,8 +85,7 @@ const registerHandler = (client) => {
                 ]
                 const voiceChannel = await interaction.guild.channels.create(`${groupName}-voice`, {
                     type: 'GUILD_VOICE',
-                    permissionOverwrites: permissionOverwrites,
-                    
+                    permissionOverwrites: permissionOverwrites, 
                 })
                 const textChannel = await interaction.guild.channels.create(`${groupName}-general`, {
                     type: 'GUILD_TEXT',
@@ -101,8 +100,6 @@ const registerHandler = (client) => {
                 await databaseManager.createGroup(
                     interaction.guild.id,
                     groupName,
-                    voiceChannel.id,
-                    textChannel.id,
                     [ voiceChannel.id, textChannel.id ]
                 )
             })();

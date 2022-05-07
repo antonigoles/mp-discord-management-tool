@@ -36,6 +36,7 @@ const commands = [
     require("./commands/tasktracker.js"),
     require("./commands/grouprename.js"),
     require("./commands/removekickedmembers.js"),
+    require("./commands/addchannel.js"),
 ];
 
 commands.forEach(cmd=>cmd.registerHandler(client))
