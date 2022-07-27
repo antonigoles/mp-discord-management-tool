@@ -19,6 +19,11 @@ const registerHandler = (client) => {
                 return;
             }
 
+            if ( !(await databaseManager.isGroupInDb(interaction.guild.id, groupName)) ) {
+                interaction.reply({content: `😣 Ta grupa już nie istnieje!! Pozostałości po grupie należy usunąć ręcznie`})
+                return;
+            }
+
             interaction.reply({content: `❗ Usuwanie grupy ${groupName}...`});
             await interaction.guild.roles.fetch()
                 .then( roles => {

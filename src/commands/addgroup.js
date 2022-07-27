@@ -27,29 +27,8 @@ const registerHandler = (client) => {
                 return;
             }
 
-            const categoryChannel = interaction.options.getChannel("category_name")
-            let categoryChannelName = categoryChannel.name;
-            let isCategory = false
-            await interaction.guild.channels.fetch().then( channels => {
-                channels.map( channel => {
-                    if ( channel.type == 'GUILD_CATEGORY' && channel.name == categoryChannelName ) {
-                        isCategory = true;
-                    }
-                })
-            })
-
-            if ( !isCategory ) {
-                interaction.reply({content: `😣 Ta kategoria nie istnieje!!`})
-                return;
-            }
-
             interaction.reply({content: `✅ Utworzono nową grupę o nazwie: ${ "`" + groupName + "`" }`});
             await (async () => {
-                const mentionShortcut = await interaction.guild.roles.create({
-                    name: `Grupa: ${groupName}`,
-                    color: 'GREEN',
-                })
-
                 const studentRole = await interaction.guild.roles.create({
                     name: `Uczen: ${groupName}`,
                     color: 'BLUE',
@@ -83,10 +62,17 @@ const registerHandler = (client) => {
                         ],
                     }
                 ]
+
+                const categoryChannel = await interaction.guild.channels.create(`${groupName}`, {
+                    type: 'GUILD_CATEGORY',
+                    permissionOverwrites: permissionOverwrites,
+                })
+
                 const voiceChannel = await interaction.guild.channels.create(`${groupName}-voice`, {
                     type: 'GUILD_VOICE',
                     permissionOverwrites: permissionOverwrites, 
                 })
+                
                 const textChannel = await interaction.guild.channels.create(`${groupName}-general`, {
                     type: 'GUILD_TEXT',
                     permissionOverwrites: permissionOverwrites,
@@ -100,7 +86,7 @@ const registerHandler = (client) => {
                 await databaseManager.createGroup(
                     interaction.guild.id,
                     groupName,
-                    [ voiceChannel.id, textChannel.id ]
+                    [ voiceChannel.id, textChannel.id, categoryChannel.id ]
                 )
             })();
         }
@@ -116,10 +102,5 @@ exports.command = new SlashCommandBuilder()
                             .setDescription("The name of the group (must be unique)")
                             .setRequired(true)
                     )
-                    .addChannelOption( option => 
-                        option.setName("category_name")
-                            .setDescription("The category of the channel")
-                            .setRequired(true)
-                    );
 
 exports.registerHandler = registerHandler
